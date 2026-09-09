@@ -1,0 +1,39 @@
+# Sample config: MPAS 4-threshold comparison (same systems: list as
+# config_mpas_thresholds.yaml) restricted to an explicit 0-36h lead-time
+# SUBSET via lead_time.lead_minutes, rather than the full real 0-132h
+# range -- a test of the "explicit lead_minutes override" capability
+# (LeadTimeConfig.lead_minutes) independent of the "auto-discover the full
+# available range" default every other sample config here uses.
+#
+# "bring your own larger dataset" reference, points at ncar_mpas_analysis/,
+# which is not bundled with this package.
+
+systems:
+  - name: 100km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_100km
+  - name: 200km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_200km
+  - name: 300km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_300km
+  - name: 400km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_400km
+
+lead_time:
+  mode: intersection
+  # Explicit subset: 0, 1, 2, ..., 36 hours (37 lead times) out of the real
+  # 133 available (0-132h) -- confirms the driver correctly restricts to
+  # just this range rather than silently using everything available.
+  lead_minutes: [0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720,
+                 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380,
+                 1440, 1500, 1560, 1620, 1680, 1740, 1800, 1860, 1920, 1980,
+                 2040, 2100, 2160]
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/mpas_0_36h
+
+require_shared_cases: true

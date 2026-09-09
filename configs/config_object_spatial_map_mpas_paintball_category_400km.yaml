@@ -1,0 +1,25 @@
+# Same as config_object_spatial_map_mpas_paintball_category_100km.yaml,
+# matched against the 400km-matching-threshold archive instead (the looser
+# threshold) -- same members/lead-time selection, so the two directories
+# are directly comparable side by side.
+#
+# "bring your own larger dataset" reference, points at ncar_mpas_analysis/,
+# which is not bundled with this package.
+
+forecast_object_dir: ../../ncar_mpas_analysis/mpas_objects
+mrms_object_dir: ../../ncar_mpas_analysis/mrms_objects
+match_dir: ../../ncar_mpas_analysis/matched_objects_400km
+init_time: "2023-04-24T00:00:00"
+
+color_by: category
+paintball: true
+show_mrms_overlay: true
+
+members:
+  mode: all
+
+times:
+  mode: range
+  lead_minutes_range: [1440, 2880]  # 24h-48h, hourly
+
+output_dir: output/object_spatial_maps/mpas_paintball_category_400km

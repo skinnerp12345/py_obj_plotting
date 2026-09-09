@@ -1,0 +1,27 @@
+# Sample config: 2-system SFE comparison, WoFS (18-member ensemble) vs.
+# NowcastNet (deterministic, no member dimension at all) -- exercises the
+# ensemble-vs-deterministic rendering split (plan design #5) directly in a
+# pairwise comparison, not just as part of a 3-system plot.
+#
+# "bring your own larger dataset" reference, points at sfe_poster/, which
+# is not bundled with this package.
+
+systems:
+  - name: WoFS
+    match_dir: ../../sfe_poster/sfe_matches/wofs_vs_mrms
+  - name: NowcastNet
+    match_dir: ../../sfe_poster/sfe_matches/nowcastnet_vs_mrms
+
+lead_time:
+  # union: NowcastNet's real first available lead is 10min, not 0.
+  mode: union
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/sfe_wofs_vs_nowcastnet
+
+require_shared_cases: false

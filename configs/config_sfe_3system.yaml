@@ -1,0 +1,47 @@
+# Sample config: SFE short-term comparison, 3 systems (WoFS, WoFSCast,
+# NowcastNet) matched against MRMS -- a mixed ensemble (WoFS/WoFSCast, 18
+# members each) / deterministic (NowcastNet, no member dimension at all)
+# case, real lead-time cadence differing per system (WoFS 5-min, WoFSCast/
+# NowcastNet 10-min), and a real, confirmed startup-availability gap
+# (WoFSCast has no matched objects before lead=20min).
+#
+# "bring your own larger dataset" reference, same convention as
+# python_obj/configs/config.yaml -- points at sfe_poster/, which is not
+# bundled with this package.
+
+systems:
+  - name: WoFS
+    match_dir: ../../sfe_poster/sfe_matches/wofs_vs_mrms
+  - name: WoFSCast
+    match_dir: ../../sfe_poster/sfe_matches/wofscast_vs_mrms
+  - name: NowcastNet
+    match_dir: ../../sfe_poster/sfe_matches/nowcastnet_vs_mrms
+
+lead_time:
+  # "union" is the right choice here, not "intersection": NowcastNet's real
+  # first available lead is 10min and WoFSCast's is 20min (a real, confirmed
+  # startup-availability gap -- see python_obj's own progress log), so a
+  # strict "every system must have it" rule would exclude every lead time
+  # before 20min entirely. Under union, each system contributes its own
+  # early points independently rather than all 3 losing that whole window.
+  mode: union
+  # lead_minutes omitted -- auto-discovered as the union of every system's
+  # own real lead minutes (0-360min across the 3 systems combined).
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/sfe_3system
+
+# false, not the schema default of true: confirmed real (144/207 shared
+# across WoFS/WoFSCast/NowcastNet -- WoFS has 6 exclusively-own cases,
+# NowcastNet has 17) that these 3 real archives were not all populated for
+# the identical set of forecast cycles. This sample is meant to actually
+# produce comparison plots, so it proceeds on the 144-case shared subset
+# (still reported, never silently pooled) rather than raising -- a
+# deliberate choice for this reference config, not the recommended default
+# for a new comparison whose case alignment you haven't checked yet.
+require_shared_cases: false

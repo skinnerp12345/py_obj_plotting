@@ -1,0 +1,12 @@
+# SAMPLE CONFIG: standalone composite-reflectivity spatial map from the raw
+# native MRMS GRIB2 observation for the bundled 2023-05-13 00:00:15Z case
+# (sample_data/mrms_case/) -- no external data needed, no regridding
+# involved (native resolution).
+
+source: mrms_native
+input_dir: ../sample_data/mrms_case/mrms_native/20230513
+
+times:
+  mode: full
+
+output_dir: output/sample_mrms_reflectivity_native

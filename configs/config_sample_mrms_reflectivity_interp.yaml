@@ -1,0 +1,13 @@
+# SAMPLE CONFIG: standalone composite-reflectivity spatial map from the
+# same 2023-05-13 00:00:15Z case, interpolated onto the real MPAS
+# full-CONUS target grid and cropped to the eastern-2/3-CONUS kept region
+# (sample_data/mrms_case/) -- no external data needed, no regridding
+# performed here (already pre-computed by sample_data/build_mrms_case.py).
+
+source: mrms_interp
+input_dir: ../sample_data/mrms_case/mrms_interp
+
+times:
+  mode: full
+
+output_dir: output/sample_mrms_reflectivity_interp

@@ -1,0 +1,55 @@
+# SAMPLE CONFIG: runs entirely against this package's own bundled
+# sample_data/wofs_wofscast_case/ (4 small real match files, ~880 KB total,
+# 2 real forecast cases each for WoFS and WoFSCast vs. MRMS, 2026-05-08
+# 00Z/01Z) -- no external dataset needed. Demonstrates the full verification
+# suite (time series, diagnostic distributions, performance diagrams,
+# object-property POD heatmaps) end to end on a genuinely small, runnable
+# example; see configs/config_sfe_wofs_vs_wofscast_suite.yaml for the same
+# capability against the much larger full sfe_poster/ archive.
+#
+# Both real files span 0-6h (WoFS 5-min cadence, WoFSCast starting at
+# 20min), 18 real ensemble members each. Only 2 forecast cases exist in
+# this bundle, so case_grouping: init_time is used to keep them as 2
+# distinct points rather than collapsing to 1 under day-grouping -- the
+# performance diagrams below are correspondingly minimal (2 points) but
+# real, not fabricated for a larger appearance.
+#
+# Run with: drivers.plot_matching_timeseries.run_one_case(path).
+
+systems:
+  - name: WoFS
+    match_dir: ../sample_data/wofs_wofscast_case/wofs_vs_mrms
+  - name: WoFSCast
+    match_dir: ../sample_data/wofs_wofscast_case/wofscast_vs_mrms
+
+lead_time:
+  mode: union   # WoFSCast's first available lead here is 20min, not 0
+metrics: [pod, far, fbias, csi]
+require_shared_cases: false
+
+performance_diagrams:
+  case_scatter:
+    case_grouping: init_time
+    marker_size_basis: truth
+    periods:
+      - name: "0-60min"
+        lead_minutes_range: [0, 60]
+      - name: "180-240min"
+        lead_minutes_range: [180, 240]
+  lead_time_trajectory:
+    label_interval_minutes: 60
+
+two_system_comparison:
+  colormap: RdBu_r
+  # case_scatter_periods/histogram_periods omitted -> reuses
+  # performance_diagrams.case_scatter.periods above for both features.
+
+heatmaps:
+  area_bins: [0, 150, 200, 250, 300, 400]
+  max_intensity_bins: [40, 45, 48, 51, 54, 60]
+  age_bins: [-3600, -1800, 0, 1800, 3600]   # neither source here was tracked -- demonstrates the clean-skip report
+
+storm_mode_timeseries:
+  modes: [cellular, mixed, linear]
+
+output_dir: output/sample_wofs_wofscast_suite

@@ -1,0 +1,31 @@
+# Sample config: 2-system SFE comparison, WoFS vs. WoFSCast (both real
+# 18-member ensembles vs. MRMS) -- a pairwise subset of
+# config_sfe_3system.yaml, using the identical systems: mechanism with just
+# 2 entries instead of 3, demonstrating the same config drives any N.
+#
+# "bring your own larger dataset" reference, points at sfe_poster/, which
+# is not bundled with this package.
+
+systems:
+  - name: WoFS
+    match_dir: ../../sfe_poster/sfe_matches/wofs_vs_mrms
+  - name: WoFSCast
+    match_dir: ../../sfe_poster/sfe_matches/wofscast_vs_mrms
+
+lead_time:
+  # union, not intersection: WoFSCast's real first available lead is
+  # 20min (confirmed startup-availability gap) -- strict mode would exclude
+  # every lead time before 20min for BOTH systems.
+  mode: union
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/sfe_wofs_vs_wofscast
+
+# false: confirmed real that WoFS/WoFSCast don't cover the identical case
+# set (see config_sfe_3system.yaml's own comment for the measured numbers).
+require_shared_cases: false

@@ -1,0 +1,22 @@
+# Real, runnable example: single NowcastNet forecast initialization
+# (2026-04-27 19Z), deterministic (no ensemble member dimension), full
+# available forecast length (18 ten-minute times, ~3h), colored by storm
+# mode (cellular/mixed/linear) with the MRMS truth overlay.
+#
+# "bring your own larger dataset" reference, points at sfe_poster/, which
+# is not bundled with this package.
+
+forecast_object_dir: ../../sfe_poster/sfe_objects/nowcastnet_obj/20260427
+mrms_object_dir: ../../sfe_poster/sfe_objects/mrms_obj
+init_time: "2026-04-27T19:00:00"
+
+color_by: storm_mode
+show_mrms_overlay: true
+
+members:
+  mode: all
+
+times:
+  mode: full
+
+output_dir: output/object_spatial_maps/wofs_nowcastnet/nowcastnet

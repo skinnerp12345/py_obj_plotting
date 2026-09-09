@@ -1,0 +1,27 @@
+# Sample config: 2-system SFE comparison, WoFSCast (18-member ensemble) vs.
+# NowcastNet (deterministic) -- the two systems whose real startup-
+# availability gaps differ from each other (WoFSCast's first lead is
+# 20min, NowcastNet's is 10min), stress-testing the union-mode lead-time
+# axis with two DIFFERENT non-zero starting points at once.
+#
+# "bring your own larger dataset" reference, points at sfe_poster/, which
+# is not bundled with this package.
+
+systems:
+  - name: WoFSCast
+    match_dir: ../../sfe_poster/sfe_matches/wofscast_vs_mrms
+  - name: NowcastNet
+    match_dir: ../../sfe_poster/sfe_matches/nowcastnet_vs_mrms
+
+lead_time:
+  mode: union
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/sfe_wofscast_vs_nowcastnet
+
+require_shared_cases: false

@@ -1,0 +1,22 @@
+# Real, runnable example: standalone composite-reflectivity spatial map
+# from a real 18-member stacked-ensemble WoFS forecast file (comp_dz(ne=18,
+# lat, lon), one file per valid time) -- points at py_obj_plotting's own
+# bundled python_obj/sample_data/, so this runs with no external data
+# needed. Renders exactly ONE member (member_id required whenever
+# stacked_members is set -- this feature does not do ensemble aggregation/
+# overlay, see plot_paintball_map for that different, larger capability).
+
+source: model
+input_dir: ../../python_obj/sample_data/wofs_case/wofs
+var_name: comp_dz
+lat_name: xlat
+lon_name: xlon
+stacked_members: true
+member_id: mem03
+valid_time_attr: valid_time
+valid_time_format: "%Y%m%d_%H%M%S"
+
+times:
+  mode: full
+
+output_dir: output/reflectivity_maps/wofs_stacked

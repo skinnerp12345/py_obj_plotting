@@ -1,0 +1,11 @@
+# Regenerable plot output -- never commit, always safe to delete
+configs/output/
+output/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# macOS
+.DS_Store

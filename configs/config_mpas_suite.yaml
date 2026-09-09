@@ -1,0 +1,56 @@
+# Sample SUITE config (see config.py's load_suite_config()): one shared
+# `systems:` registry (all 4 real MPAS matching-threshold variants) feeding
+# THREE independent analyses from a single file -- the full 4-way
+# comparison, a 2-way performance-diagram/two-system-diagnostic comparison
+# (a subset of the registry, by name), and a single-case-vs-baseline
+# highlight for one real forecast case on the 100km threshold. Each
+# analysis gets its own output_dir; nothing here is shared beyond the
+# `systems:` registry itself.
+#
+# Run with: drivers.plot_matching_timeseries.run_suite(path), NOT
+# run_one_case() (which is for the flat, single-analysis shape only).
+#
+# "bring your own larger dataset" reference, points at ncar_mpas_analysis/,
+# which is not bundled with this package.
+
+systems:
+  - name: 100km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_100km
+  - name: 200km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_200km
+  - name: 300km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_300km
+  - name: 400km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_400km
+
+analyses:
+  - name: all_four_thresholds
+    # systems: omitted -> every registered system (100/200/300/400km)
+    lead_time:
+      mode: intersection
+    metrics: [pod, far, fbias, csi]
+    output_dir: output/mpas_suite/all_four_thresholds
+
+  - name: 100km_vs_400km_diagnostics
+    systems: [100km, 400km]
+    performance_diagrams:
+      case_scatter:
+        periods:
+          - name: "32-37h"
+            lead_minutes_range: [1920, 2220]
+    two_system_comparison: {}
+    output_dir: output/mpas_suite/100km_vs_400km_diagnostics
+
+  - name: 100km_case_20230424_highlight
+    systems: [100km]
+    single_case_highlight:
+      system: 100km
+      case: "2023-04-24 0000Z"
+    performance_diagrams:
+      case_scatter:
+        periods:
+          - name: "32-37h"
+            lead_minutes_range: [1920, 2220]
+      # lead_time_trajectory omitted: single_case_highlight mode has no
+      # lead-time-trajectory equivalent (removed as unnecessary).
+    output_dir: output/mpas_suite/100km_case_20230424_highlight

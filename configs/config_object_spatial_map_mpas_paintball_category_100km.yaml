@@ -1,0 +1,29 @@
+# Real, runnable example: single MPAS forecast initialization (2023-04-24
+# 00Z), ensemble "paintball" plot -- all 5 members overlaid on one shared
+# domain per valid time, each member's own footprint colored by ITS OWN
+# hit/miss/false_alarm/extra match-category assignment against the
+# 100km-matching-threshold archive, plus the MRMS truth footprint
+# overlaid, with ensemble-MEAN POD/FAR/FBIAS/CSI annotated (each member's
+# own instantaneous skill averaged across the ensemble). Restricted to the
+# 24-48h lead window (25 hourly images) to keep the output set small.
+#
+# "bring your own larger dataset" reference, points at ncar_mpas_analysis/,
+# which is not bundled with this package.
+
+forecast_object_dir: ../../ncar_mpas_analysis/mpas_objects
+mrms_object_dir: ../../ncar_mpas_analysis/mrms_objects
+match_dir: ../../ncar_mpas_analysis/matched_objects_100km
+init_time: "2023-04-24T00:00:00"
+
+color_by: category
+paintball: true
+show_mrms_overlay: true
+
+members:
+  mode: all
+
+times:
+  mode: range
+  lead_minutes_range: [1440, 2880]  # 24h-48h, hourly
+
+output_dir: output/object_spatial_maps/mpas_paintball_category_100km

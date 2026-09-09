@@ -1,0 +1,40 @@
+# Sample config: MPAS matching-threshold comparison -- the SAME `systems:`
+# mechanism used for "N systems" (config_sfe_3system.yaml) applied instead
+# to "N matching-threshold variants" of one forecast (ncar_mpas_analysis's
+# 100/200/300/400 km max_boundary_disp_km/max_centroid_disp_km directories),
+# proving the SystemSpec abstraction genuinely unifies both cases. Single
+# 5-member ensemble, uniform hourly cadence, 0-132h lead range (133 lead
+# times) -- a very different shape than the SFE case (multi-day, hourly,
+# single real forecast system) used to stress-test adaptive x-ticks/lead
+# range handling at a different scale.
+#
+# "bring your own larger dataset" reference, same convention as
+# python_obj/configs/config.yaml -- points at ncar_mpas_analysis/, which is
+# not bundled with this package.
+
+systems:
+  - name: 100km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_100km
+  - name: 200km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_200km
+  - name: 300km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_300km
+  - name: 400km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_400km
+
+lead_time:
+  # All 4 threshold directories share the identical 118 real forecast cases
+  # and the identical 133 lead times (confirmed during this redesign's
+  # planning phase) -- "intersection" is the natural default here, and (since
+  # coverage is already identical) behaves the same as "union" would.
+  mode: intersection
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/mpas_thresholds
+
+require_shared_cases: true

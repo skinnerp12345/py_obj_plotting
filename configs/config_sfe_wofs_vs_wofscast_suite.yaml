@@ -1,0 +1,81 @@
+# Sample SUITE config (see config.py's load_suite_config()): WoFS vs.
+# WoFSCast, demonstrating the full performance-diagram/two-system-
+# diagnostic/single-case-highlight/heatmap/storm-mode-timeseries plot
+# suite (case-scatter, lead-time trajectory, two-system CSI-difference
+# diagram, POD/FAR/FBIAS/CSI diff histograms, single-case-vs-baseline,
+# POD-by-object-property heatmaps, storm-mode-filtered time series) on a
+# genuinely different data shape than the MPAS examples
+# (config_mpas_performance_diagrams.yaml, config_mpas_suite.yaml): real
+# 5-min (WoFS)/hourly (WoFSCast) cadence, day-grouped cases (many
+# initializations per calendar day, not one per day), and
+# `lead_time.mode: union` (WoFSCast's first available lead is 20min).
+#
+# heatmaps.area_bins uses a fixed 200 km^2 bin width up to 2000 km^2,
+# then one final open-ended bin aggregating every object larger than that
+# (per explicit user direction, not variable-width bins) -- this real
+# dataset's own 99th percentile area is ~11557 km^2, so that overflow bin
+# is genuinely exercised, not just a formality. max_intensity_bins was
+# derived empirically from this real dataset's own 10th/50th/90th/99th
+# percentiles (not guessed): WoFS max_intensity pct=[48, 53, 59, 64];
+# WoFSCast's own percentiles are close enough to share the same bins.
+# age_bins is included too, but neither WoFS nor WoFSCast's truth
+# (MRMS) series here was ever regenerated with the truth_age_seconds
+# schema field -- the age heatmaps are expected to be skipped with an
+# explicit "no real data" report, demonstrating that real failure mode
+# end to end (a genuinely tracked age heatmap was validated separately,
+# against a small bundled sample case -- see this session's schema-
+# extension work).
+#
+# Run with: drivers.plot_matching_timeseries.run_suite(path).
+#
+# "bring your own larger dataset" reference, points at sfe_poster/, which
+# is not bundled with this package.
+
+systems:
+  - name: WoFS
+    match_dir: ../../sfe_poster/sfe_matches/wofs_vs_mrms
+  - name: WoFSCast
+    match_dir: ../../sfe_poster/sfe_matches/wofscast_vs_mrms
+
+analyses:
+  - name: wofs_vs_wofscast_diagnostics
+    systems: [WoFS, WoFSCast]
+    lead_time:
+      mode: union
+    metrics: [pod, far, fbias, csi]
+    require_shared_cases: false  # confirmed real: WoFS/WoFSCast don't share the identical case set
+    performance_diagrams:
+      case_scatter:
+        case_grouping: day       # WoFS/WoFSCast: many initializations per calendar day
+        marker_size_basis: truth
+        periods:
+          - name: "60-90min"
+            lead_minutes_range: [60, 90]
+          - name: "3h"
+            lead_minutes_range: [180, 180]
+      lead_time_trajectory:
+        label_interval_minutes: 30   # every 30min
+    two_system_comparison:
+      colormap: RdBu_r
+      # case_scatter_periods/histogram_periods omitted -> reuses
+      # performance_diagrams.case_scatter.periods above for both features.
+    heatmaps:
+      area_bins: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, .inf]
+      max_intensity_bins: [40, 45, 50, 55, 60, 65, 70]
+      age_bins: [-3600, -1800, 0, 1800, 3600, 5400, 7200]
+    storm_mode_timeseries:
+      modes: [cellular, mixed, linear]
+    output_dir: output/sfe_wofs_vs_wofscast_suite/wofs_vs_wofscast_diagnostics
+
+  - name: wofs_case_highlight
+    systems: [WoFS]
+    single_case_highlight:
+      system: WoFS
+      case: "2026-04-30"     # a real WoFS day (case_grouping: day), highlighted against its other real days
+    performance_diagrams:
+      case_scatter:
+        case_grouping: day
+        periods:
+          - name: "60-90min"
+            lead_minutes_range: [60, 90]
+    output_dir: output/sfe_wofs_vs_wofscast_suite/wofs_case_highlight

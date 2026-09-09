@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py_obj_plotting"
+version = "0.1.0"
+description = "Verification plotting and climatology suite for python_obj match/object output: time series, diagnostic distributions, performance diagrams, object-property heatmaps, and spatial maps."
+requires-python = ">=3.10"
+dependencies = ["python_obj"]
+
+# Maps the importable package name "py_obj_plotting" to wherever this repo
+# happens to be checked out, regardless of what the containing folder is
+# actually named -- installing via `pip install -e .` decouples the two, so
+# every `import py_obj_plotting...` statement in drivers/tests/notebooks
+# resolves correctly no matter what the clone folder is called or what
+# directory a script is run from.
+[tool.setuptools]
+package-dir = {"py_obj_plotting" = "."}
+packages = [
+    "py_obj_plotting",
+    "py_obj_plotting.climatology",
+    "py_obj_plotting.plots",
+    "py_obj_plotting.drivers",
+]

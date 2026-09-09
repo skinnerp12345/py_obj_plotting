@@ -1,0 +1,12 @@
+# Real, runnable example: standalone composite-reflectivity spatial map
+# from RAW native MRMS GRIB2 observations (no object identification
+# involved at all) -- points at py_obj_plotting's own bundled
+# python_obj/sample_data/, so this runs with no external data needed.
+
+source: mrms_native
+input_dir: ../../python_obj/sample_data/mpas_case/mrms/20230501
+
+times:
+  mode: full
+
+output_dir: output/reflectivity_maps/mrms_native

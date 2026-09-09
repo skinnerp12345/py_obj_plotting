@@ -1,0 +1,27 @@
+# Sample config: 2-system MPAS matching-threshold comparison, 100km vs.
+# 400km (the two extremes of the 4 available thresholds) -- a pairwise
+# subset of config_mpas_thresholds.yaml, used to spot-check adaptive
+# x-tick/data-density handling at specific short/medium/long lead times
+# (24h, 36h, 120h) within the real 0-132h range.
+#
+# "bring your own larger dataset" reference, points at ncar_mpas_analysis/,
+# which is not bundled with this package.
+
+systems:
+  - name: 100km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_100km
+  - name: 400km
+    match_dir: ../../ncar_mpas_analysis/matched_objects_400km
+
+lead_time:
+  mode: intersection
+
+metrics: [pod, far, fbias, csi]
+
+bootstrap:
+  samples: 1000
+  ci_interval: 95
+
+output_dir: output/mpas_100km_vs_400km
+
+require_shared_cases: true
