@@ -15,7 +15,7 @@ from datetime import datetime
 import numpy as np
 import pytest
 
-from python_obj.histogram import HistogramSlice, default_bin_edges, write_histogram_file
+from py_obj.histogram import HistogramSlice, default_bin_edges, write_histogram_file
 from py_obj_plotting.climatology import build_shared_times_summary_table, build_shared_valid_times_climatology
 
 BINS = default_bin_edges(bin_min=0.0, bin_max=10.0, bin_width=1.0)

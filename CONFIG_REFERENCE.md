@@ -36,7 +36,7 @@ identically inside each `analyses:` entry).
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `name` | str | required | Must be unique within the list. |
-| `match_dir` | str | required | Directory of `match_init_*.nc` files (`python_obj.obj_core.run_matching_series`, `file_grouping="init_snapshot"`). |
+| `match_dir` | str | required | Directory of `match_init_*.nc` files (`py_obj.obj_core.run_matching_series`, `file_grouping="init_snapshot"`). |
 | `color` | `[r, g, b]` \| `null` | `null` (auto-assigned) | Auto-assigns from a default palette in list order if omitted. |
 | `match_pattern` | str (glob) | `"match_init_*.nc"` | Restricts which files in `match_dir` are read -- e.g. to bundle only a small subset. |
 

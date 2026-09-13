@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pytest
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.climatology.aggregate_object_property_pod import build_object_property_pod_climatology
 
 

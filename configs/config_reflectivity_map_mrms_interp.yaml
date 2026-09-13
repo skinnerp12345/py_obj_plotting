@@ -1,10 +1,10 @@
 # Real, runnable example: standalone composite-reflectivity spatial map
 # from already-interpolated MRMS netCDF observations -- points at
-# py_obj_plotting's own bundled python_obj/sample_data/, so this runs with
+# py_obj_plotting's own bundled py_obj/sample_data/, so this runs with
 # no external data needed.
 
 source: mrms_interp
-input_dir: ../../python_obj/sample_data/mpas_case/interp_mrms/20230501
+input_dir: ../../py_obj/sample_data/mpas_case/interp_mrms/20230501
 
 times:
   mode: full

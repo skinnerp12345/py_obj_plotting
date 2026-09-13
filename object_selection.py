@@ -13,8 +13,8 @@ from datetime import datetime, timedelta
 
 import netCDF4
 
-from python_obj.obj_core import read_init_time_only
-from python_obj.obj_core.object_io import _read_member_ids, _read_valid_times
+from py_obj.obj_core import read_init_time_only
+from py_obj.obj_core.object_io import _read_member_ids, _read_valid_times
 
 _VALID_MEMBER_MODES = ("single", "list", "all")
 _VALID_TIME_MODES = ("single", "range", "full")

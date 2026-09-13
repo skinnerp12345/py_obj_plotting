@@ -16,7 +16,7 @@ exact same transform the legacy used -- this normalizes for forecast
 progression so the SAME physical storm's maturity is comparable across
 lead times, not just its raw age at whatever valid time it happened to be
 observed. `truth_age_seconds` is NaN for any match file whose truth series
-wasn't tracked at identification time (see python_obj/obj_core/matching.py's
+wasn't tracked at identification time (see py_obj/obj_core/matching.py's
 age_seconds field) -- np.digitize places NaN values outside every real
 bin (confirmed: digitize(nan, edges) == len(edges), i.e. "above the last
 edge"), so they're automatically excluded by the same in-range mask used

@@ -49,7 +49,7 @@ sys.path.insert(0, _REPO_ROOT)
 
 import numpy as np
 
-from python_obj.histogram import histogram_to_cdf, histogram_to_pdf, read_histogram_file
+from py_obj.histogram import histogram_to_cdf, histogram_to_pdf, read_histogram_file
 from py_obj_plotting.climatology import SharedValidTimesClimatology, build_shared_times_summary_table
 from py_obj_plotting.plots import compute_percentile_table, plot_combined_cdf, plot_combined_pdf, plot_pdf_cdf_per_system
 

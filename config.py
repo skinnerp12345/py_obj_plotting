@@ -1,10 +1,10 @@
 """Config layer for the matching-output time-series redesign, mirroring
-python_obj.config's own conventions: dataclasses + load_config(path), a
+py_obj.config's own conventions: dataclasses + load_config(path), a
 namelist-style YAML file, path-shaped fields resolved relative to the
 CONFIG FILE'S OWN directory (not the caller's working directory), clear
 named-error validation for a present-but-incomplete section.
 
-Unlike python_obj.config's Config (several independently optional
+Unlike py_obj.config's Config (several independently optional
 top-level sections spanning several unrelated driver purposes --
 interpolation, object ID, matching, histograms), this config has exactly
 one job per analysis -- describing one matching-output time-series
@@ -50,7 +50,7 @@ _VALID_METRICS = ("pod", "far", "fbias", "csi")
 _VALID_CASE_GROUPINGS = ("init_time", "day")
 _VALID_MARKER_SIZE_BASES = ("truth", "forecast")
 _VALID_STORM_MODES = ("cellular", "mixed", "linear")
-STORM_MODE_TO_INT = {"cellular": 0, "mixed": 1, "linear": 2}  # matches python_obj's is_linear convention
+STORM_MODE_TO_INT = {"cellular": 0, "mixed": 1, "linear": 2}  # matches py_obj's is_linear convention
 _VALID_SPATIAL_COLOR_BY = ("single", "storm_mode", "age", "category")
 _VALID_REFLECTIVITY_SOURCES = ("model", "mrms_native", "mrms_interp")
 
@@ -128,7 +128,7 @@ class HeatmapsConfig:
     aggregate_object_property_pod's module docstring). age_bins only
     produces real data if the truth series was tracked at identification
     time; a match file without tracking has no real age data at all (see
-    python_obj/obj_core/matching.py's age_seconds field), which the
+    py_obj/obj_core/matching.py's age_seconds field), which the
     driver detects and reports rather than silently plotting a blank
     heatmap. When exactly 2 systems are being compared AND
     two_system_comparison: is also present in this analysis, one
@@ -153,7 +153,7 @@ class HeatmapsConfig:
 class StormModeTimeseriesConfig:
     """The existing POD/FAR/FBIAS/CSI comparison time series (see
     MatchingTimeseriesConfig.metrics), recomputed separately for each
-    requested storm mode (see python_obj's is_linear classification:
+    requested storm mode (see py_obj's is_linear classification:
     0=cellular, 1=mixed, 2=linear) -- one additional bundle of time-series
     plots per mode, written flat into output_dir with the mode name suffixed
     onto each filename. Requires
@@ -567,7 +567,7 @@ class ReflectivityMapConfig:
     applies:
 
     - "model": forecast output (MPAS/WoFS/NowcastNet), via
-      python_obj.obj_core.manifest.build_model_manifest. `var_name` is
+      py_obj.obj_core.manifest.build_model_manifest. `var_name` is
       required. `member_subdirs`/`stacked_members` mirror that function's
       own semantics exactly (MPAS-style member subdirectories vs. WoFS-style
       one-file-with-all-members-stacked); whenever either is set,

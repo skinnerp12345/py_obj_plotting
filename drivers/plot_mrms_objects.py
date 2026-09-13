@@ -4,8 +4,8 @@ timestep for a single day.
 
 Objects shaded by is_linear category (0=cellular=orange, 1=possibly
 linear=purple, 2=linear=blue); each object's centroid marked with a small
-black circle. Reads python_obj's own object-file schema unchanged via
-python_obj.obj_core.read_object_file.
+black circle. Reads py_obj's own object-file schema unchanged via
+py_obj.obj_core.read_object_file.
 
 Plain arguments, not a YAML config -- this is one specific analysis; see
 py_obj_plotting/README.md.

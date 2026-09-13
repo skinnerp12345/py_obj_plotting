@@ -22,7 +22,7 @@ Two runnable tutorials, each against small, real data bundled in
 
 - The `pysteps_env` conda environment (`/opt/anaconda3/envs/pysteps_env/bin/python`),
   which has `jupyter`/`nbformat` plus every dependency this package or
-  `python_obj` needs.
+  `py_obj` needs.
 - No internet access needed -- both notebooks run entirely against bundled
   sample data.
 

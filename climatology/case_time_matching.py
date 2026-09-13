@@ -10,7 +10,7 @@ format -- that discovery logic is deliberately NOT shared, only the
 matching/dedup itself.
 """
 
-from python_obj.time_utils import nearest_within_tolerance
+from py_obj.time_utils import nearest_within_tolerance
 
 
 def resolve_case_matches(

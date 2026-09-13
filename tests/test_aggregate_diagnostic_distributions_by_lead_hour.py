@@ -9,7 +9,7 @@ Run with: /opt/anaconda3/envs/pysteps_env/bin/python -m pytest py_obj_plotting/t
 
 from datetime import datetime, timedelta
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.climatology import (
     build_diagnostic_distribution_climatology,
     build_diagnostic_distribution_climatology_by_storm_mode,

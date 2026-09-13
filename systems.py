@@ -39,7 +39,7 @@ DEFAULT_COLOR_PALETTE = [blue5, orange5, green5, purple5, gray5]
 class SystemSpec:
     """One forecast/matching system (or matching-threshold variant) to
     compare. `match_dir` holds file_grouping="init_snapshot"-shaped
-    match_init_*.nc files (python_obj.obj_core.run_matching_series output).
+    match_init_*.nc files (py_obj.obj_core.run_matching_series output).
     `color` auto-assigns from DEFAULT_COLOR_PALETTE in list order if left
     None -- see assign_colors()."""
     name: str

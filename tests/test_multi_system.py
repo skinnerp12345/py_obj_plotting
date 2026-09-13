@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.multi_system import compute_included_keys, load_systems
 from py_obj_plotting.systems import SystemSpec
 

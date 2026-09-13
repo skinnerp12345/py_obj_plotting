@@ -11,9 +11,9 @@ distribution per lead_hour. This lets a downstream caller compute, e.g.,
 pooled across every spring-2023-2025 case, specifically at lead hour 24"
 for every lead hour and every member.
 
-Reuses python_obj's own histogram I/O and time-matching helpers unchanged
-(python_obj.histogram.read_histogram_file, python_obj.time_utils.
-nearest_within_tolerance) -- this package builds on python_obj, it never
+Reuses py_obj's own histogram I/O and time-matching helpers unchanged
+(py_obj.histogram.read_histogram_file, py_obj.time_utils.
+nearest_within_tolerance) -- this package builds on py_obj, it never
 modifies it.
 """
 
@@ -23,7 +23,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from python_obj.histogram import read_histogram_file
+from py_obj.histogram import read_histogram_file
 
 from .case_time_matching import resolve_case_matches
 
@@ -80,8 +80,8 @@ def build_lead_hour_climatology(
 ) -> LeadHourClimatology:
     """mpas_dir/mrms_dir: directories of already-built histogram files (one
     hist_model_*.nc per MPAS forecast case, one hist_mrms_*.nc per MRMS day)
-    -- produced by python_obj.drivers.build_histogram_model/build_histogram_mrms,
-    read here unchanged via python_obj.histogram.read_histogram_file.
+    -- produced by py_obj.drivers.build_histogram_model/build_histogram_mrms,
+    read here unchanged via py_obj.histogram.read_histogram_file.
 
     valid_time_tolerance_minutes: max allowed mismatch between an MPAS
     slice's own valid_time and the nearest available MRMS slice's valid_time

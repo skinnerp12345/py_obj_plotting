@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import netCDF4
 import pytest
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.climatology import (
     build_match_lead_hour_climatology,
     build_match_lead_hour_climatology_by_storm_mode,

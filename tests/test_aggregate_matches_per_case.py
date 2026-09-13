@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.climatology.aggregate_matches_multi_system import build_multi_system_match_climatology
 from py_obj_plotting.climatology.aggregate_matches_per_case import (
     build_per_case_match_climatologies,

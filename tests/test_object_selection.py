@@ -1,6 +1,6 @@
 """Validation of object_selection.py: member/time selection resolution
 (pure logic, hand-computable) plus the file-discovery I/O helpers against
-real files written via python_obj.obj_core.write_object_file.
+real files written via py_obj.obj_core.write_object_file.
 
 Run with: /opt/anaconda3/envs/pysteps_env/bin/python -m pytest py_obj_plotting/tests/test_object_selection.py -v -s
 """
@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pytest
 
-from python_obj.obj_core import IdentificationResult, StormObject, write_object_file
+from py_obj.obj_core import IdentificationResult, StormObject, write_object_file
 from py_obj_plotting.object_selection import (
     MemberSelectionConfig,
     TimeSelectionConfig,

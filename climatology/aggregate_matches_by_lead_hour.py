@@ -5,7 +5,7 @@ forecast_extra) from many match_init_<init_time>.nc files (file_grouping=
 lead time already matched against MRMS truth).
 
 This needs no MRMS/object files and no time-tolerance matching at all --
-matching already happened upstream (python_obj.obj_core.run_matching_series),
+matching already happened upstream (py_obj.obj_core.run_matching_series),
 so a match file's own category column is already the ground truth for
 hit/miss/false_alarm/truth_extra/forecast_extra. This module only pools
 those counts across cases.
@@ -29,7 +29,7 @@ import numpy as np
 # ncar_mpas_analysis/matched_objects_*km/ files were generated before this
 # attribute existed and will not be regenerated) -- parse it from the
 # established match_init_<YYYYMMDD>_<HHMMSS>.nc filename convention instead.
-# Mirrors python_obj/drivers/run_matching_per_case.py's own
+# Mirrors py_obj/drivers/run_matching_per_case.py's own
 # _parse_filename_timestamp() pattern exactly.
 _FILENAME_TIMESTAMP_RE = re.compile(r"(\d{8})_(\d{6})")
 
@@ -187,7 +187,7 @@ def build_match_lead_hour_climatology(
 # Storm-mode-filtered pooling: the SAME contingency-count pooling as
 # build_match_lead_hour_climatology() above, restricted to records of one
 # storm mode (0=cellular, 1=mixed, 2=linear -- see
-# python_obj/obj_core/matching.py's is_linear convention), so the
+# py_obj/obj_core/matching.py's is_linear convention), so the
 # resulting MatchLeadHourClimatology flows completely unchanged through
 # the existing compute_verification_stats() -> comparison-plot pipeline.
 # truth_is_linear/forecast_is_linear are never read by the plain

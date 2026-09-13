@@ -10,10 +10,10 @@ per-bin MEAN of its members' individual PDFs -- not a sum of member counts
 then one normalization, so every member is weighted equally regardless of
 how much data it happened to contribute (explicit, confirmed choice).
 
-Reuses python_obj's own histogram I/O/aggregation math unchanged
-(python_obj.histogram.read_histogram_file/histogram_to_pdf/histogram_to_cdf)
--- this package builds on python_obj, it never modifies it. Sums directly
-from already-loaded in-memory slices rather than python_obj.histogram.
+Reuses py_obj's own histogram I/O/aggregation math unchanged
+(py_obj.histogram.read_histogram_file/histogram_to_pdf/histogram_to_cdf)
+-- this package builds on py_obj, it never modifies it. Sums directly
+from already-loaded in-memory slices rather than py_obj.histogram.
 sum_histograms() -- an ensemble source needs one pass per member, and
 sum_histograms() re-reads every file from disk per call, which would mean
 re-reading each file once per member (confirmed real cost: a real 18-member
@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from python_obj.histogram import histogram_to_cdf, histogram_to_pdf, read_histogram_file
+from py_obj.histogram import histogram_to_cdf, histogram_to_pdf, read_histogram_file
 
 
 @dataclass
@@ -73,8 +73,8 @@ def build_shared_valid_times_climatology(
 ) -> SharedValidTimesClimatology:
     """model_dirs: {system_name: directory} for every non-MRMS source, each a
     directory of already-built hist_model_*.nc files (produced by
-    python_obj.drivers.build_histogram_model). mrms_dir: directory of
-    hist_mrms_*.nc files (produced by python_obj.drivers.build_histogram_mrms).
+    py_obj.drivers.build_histogram_model). mrms_dir: directory of
+    hist_mrms_*.nc files (produced by py_obj.drivers.build_histogram_mrms).
 
     ensemble_systems: subset of model_dirs' keys whose slices carry a real
     member_id (e.g. an 18-member WoFS-style ensemble) -- these get a

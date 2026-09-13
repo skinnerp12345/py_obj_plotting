@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 
-from python_obj.regrid import discover_mrms_files
+from py_obj.regrid import discover_mrms_files
 
 _VALID_ABS_TIME_MODES = ("single", "range", "full")
 
@@ -72,7 +72,7 @@ _TIMESTAMP_RE = re.compile(r"(\d{8})[-_](\d{6})")  # handles both native MRMS's 
 
 
 def discover_mrms_files_with_time(input_dir: str, pattern: str) -> list:
-    """Wraps `python_obj.regrid.discover_mrms_files` (already handles the
+    """Wraps `py_obj.regrid.discover_mrms_files` (already handles the
     `YYYYMMDD/`-per-day-subdirectory layout for both native and interpolated
     MRMS) and attaches a filename-parsed valid_time to each result, WITHOUT
     opening/decompressing any file. A filename that doesn't match

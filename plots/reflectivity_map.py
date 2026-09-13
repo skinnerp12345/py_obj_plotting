@@ -2,7 +2,7 @@
 plotted geographically, independent of the object-identification pipeline
 entirely (unlike `object_spatial_map.py`, which shades identified storm
 OBJECT footprints, not the raw field). Applies uniformly to any of 3
-sources that share `python_obj.regrid.io_mrms.GriddedField` as their common
+sources that share `py_obj.regrid.io_mrms.GriddedField` as their common
 return type: forecast model output, native MRMS observations, already-
 interpolated MRMS observations -- confirmed the exact same class is
 returned by `load_mrms_grib2()`, `load_mrms_netcdf()`, and

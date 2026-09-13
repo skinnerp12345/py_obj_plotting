@@ -16,7 +16,7 @@ matplotlib.use("Agg")
 import numpy as np
 import pytest
 
-from python_obj.obj_core import ObjectFileContents, StormObject
+from py_obj.obj_core import ObjectFileContents, StormObject
 from py_obj_plotting.plots.mrms_object_map import (
     _category_grid,
     discover_day_files,

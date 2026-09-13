@@ -2,11 +2,11 @@
 PlateCarree, eastern-2/3 CONUS domain, state boundaries + Canada/Mexico
 country borders (no county/road layer), objects shaded by is_linear
 category (0=cellular=orange, 1=possibly linear=purple, 2=linear=blue, using
-python_obj's own three-tier StormObject.is_linear convention), plus a small
+py_obj's own three-tier StormObject.is_linear convention), plus a small
 circle marking each object's own centroid, colored to match its category.
 
-Reads python_obj's own object-file schema unchanged via
-python_obj.obj_core.read_object_file/load_conus_boundary/conus_mask_east --
+Reads py_obj's own object-file schema unchanged via
+py_obj.obj_core.read_object_file/load_conus_boundary/conus_mask_east --
 no reimplementation of object-file I/O or masking logic here.
 """
 
@@ -23,7 +23,7 @@ import numpy as np
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.patches import Patch
 
-from python_obj.obj_core import conus_mask_east, load_conus_boundary, read_object_file
+from py_obj.obj_core import conus_mask_east, load_conus_boundary, read_object_file
 
 from .. import cb_colors
 

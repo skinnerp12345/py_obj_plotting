@@ -100,8 +100,8 @@ def test_discover_parses_both_native_and_interp_filenames_and_skips_malformed(tm
 
 
 def test_real_discovery_against_bundled_sample_data():
-    mrms_dir = os.path.join(REPO_ROOT, "python_obj", "sample_data", "mpas_case", "mrms", "20230501")
-    interp_dir = os.path.join(REPO_ROOT, "python_obj", "sample_data", "mpas_case", "interp_mrms", "20230501")
+    mrms_dir = os.path.join(REPO_ROOT, "py_obj", "sample_data", "mpas_case", "mrms", "20230501")
+    interp_dir = os.path.join(REPO_ROOT, "py_obj", "sample_data", "mpas_case", "interp_mrms", "20230501")
     native = discover_mrms_files_with_time(mrms_dir, "*.grib2*")
     interp = discover_mrms_files_with_time(interp_dir, "*.nc")
     print(f"\n[refl-select-check3] native={[(os.path.basename(d.filepath), d.valid_time) for d in native]}")

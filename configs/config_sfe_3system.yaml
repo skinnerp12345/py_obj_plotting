@@ -6,7 +6,7 @@
 # (WoFSCast has no matched objects before lead=20min).
 #
 # "bring your own larger dataset" reference, same convention as
-# python_obj/configs/config.yaml -- points at sfe_poster/, which is not
+# py_obj/configs/config.yaml -- points at sfe_poster/, which is not
 # bundled with this package.
 
 systems:
@@ -20,7 +20,7 @@ systems:
 lead_time:
   # "union" is the right choice here, not "intersection": NowcastNet's real
   # first available lead is 10min and WoFSCast's is 20min (a real, confirmed
-  # startup-availability gap -- see python_obj's own progress log), so a
+  # startup-availability gap -- see py_obj's own progress log), so a
   # strict "every system must have it" rule would exclude every lead time
   # before 20min entirely. Under union, each system contributes its own
   # early points independently rather than all 3 losing that whole window.

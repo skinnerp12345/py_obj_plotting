@@ -19,7 +19,7 @@ _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.dirname(os.path.dirname(_THIS_DIR))
 sys.path.insert(0, _REPO_ROOT)
 
-from python_obj.obj_core import conus_mask_east, iter_object_slices, iter_object_slices_lazy, read_match_file, read_object_file
+from py_obj.obj_core import conus_mask_east, iter_object_slices, iter_object_slices_lazy, read_match_file, read_object_file
 from py_obj_plotting.config import load_object_spatial_map_config
 from py_obj_plotting.object_selection import (
     discover_object_file_members_and_times,

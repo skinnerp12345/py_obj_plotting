@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.climatology.aggregate_matches_multi_system import (
     build_multi_system_diagnostic_climatology,
     build_multi_system_match_climatology,
@@ -188,7 +188,7 @@ def test_object_climatology_avoids_double_counting_candidate_rows(tmp_path):
     """Reproduces the real risk this module's masking exists to avoid: a
     truth_extra/forecast_extra row carries its OWN best near-miss
     candidate's full field set on the OTHER side (see
-    python_obj/obj_core/matching.py's _record_from_objects), so a naive
+    py_obj/obj_core/matching.py's _record_from_objects), so a naive
     np.isfinite(...)-based mask would double-count an object that appears
     both on its own canonical row and as a candidate on a different object's
     extra row. One system, one case, 3 truth objects / 3 forecast objects:

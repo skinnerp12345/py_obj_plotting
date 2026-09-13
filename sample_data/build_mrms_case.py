@@ -41,13 +41,13 @@ _PKG_DIR = os.path.dirname(_THIS_DIR)
 REPO_ROOT = os.path.dirname(_PKG_DIR)
 sys.path.insert(0, REPO_ROOT)
 
-from python_obj.obj_core import (  # noqa: E402
+from py_obj.obj_core import (  # noqa: E402
     IdentificationResult,
     conus_mask_east,
     read_object_file,
     write_object_file,
 )
-from python_obj.regrid import (  # noqa: E402
+from py_obj.regrid import (  # noqa: E402
     MRMS_MISSING_VALUE,
     GridSpec,
     build_conservative_regridder,
@@ -62,7 +62,7 @@ NATIVE_MRMS_SRC = os.path.join(
 )
 TARGET_GRID_OBJECT_FILE = os.path.join(REPO_ROOT, "ncar_mpas_analysis", "mpas_objects", "obj_init_20230512_000000.nc")
 MRMS_OBJECT_FILE = os.path.join(REPO_ROOT, "ncar_mpas_analysis", "mrms_objects", "obj_obs_20230513_000015.nc")
-WEIGHT_CACHE_DIR = os.path.join(REPO_ROOT, "python_obj", "tests", "_weight_cache")
+WEIGHT_CACHE_DIR = os.path.join(REPO_ROOT, "py_obj", "tests", "_weight_cache")
 
 OUT_DIR = os.path.join(_THIS_DIR, "mrms_case")
 NATIVE_OUT_DIR = os.path.join(OUT_DIR, "mrms_native", "20230513")

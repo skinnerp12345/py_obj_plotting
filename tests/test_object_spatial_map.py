@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from python_obj.obj_core import MatchRecord, StormObject, iter_object_slices, iter_object_slices_lazy, read_match_file, read_object_file
+from py_obj.obj_core import MatchRecord, StormObject, iter_object_slices, iter_object_slices_lazy, read_match_file, read_object_file
 from py_obj_plotting import cb_colors
 from py_obj_plotting.plots.object_spatial_map import (
     ObjectSlice,

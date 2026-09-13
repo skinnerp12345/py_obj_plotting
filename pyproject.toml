@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "py_obj_plotting"
 version = "0.1.0"
-description = "Verification plotting and climatology suite for python_obj match/object output: time series, diagnostic distributions, performance diagrams, object-property heatmaps, and spatial maps."
+description = "Verification plotting and climatology suite for py_obj match/object output: time series, diagnostic distributions, performance diagrams, object-property heatmaps, and spatial maps."
 requires-python = ">=3.10"
-dependencies = ["python_obj"]
+dependencies = ["py_obj"]
 
 # Maps the importable package name "py_obj_plotting" to wherever this repo
 # happens to be checked out, regardless of what the containing folder is

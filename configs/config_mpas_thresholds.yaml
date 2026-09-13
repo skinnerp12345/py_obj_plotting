@@ -9,7 +9,7 @@
 # range handling at a different scale.
 #
 # "bring your own larger dataset" reference, same convention as
-# python_obj/configs/config.yaml -- points at ncar_mpas_analysis/, which is
+# py_obj/configs/config.yaml -- points at ncar_mpas_analysis/, which is
 # not bundled with this package.
 
 systems:

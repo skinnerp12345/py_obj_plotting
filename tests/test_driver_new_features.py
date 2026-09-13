@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 import pytest
 import yaml
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting.drivers.plot_matching_timeseries import run_one_case, run_suite
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

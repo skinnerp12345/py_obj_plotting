@@ -46,7 +46,7 @@ import numpy as np
 from matplotlib.colors import BoundaryNorm, ListedColormap, Normalize
 from matplotlib.patches import Patch
 
-from python_obj.obj_core import MatchRecord, StormObject
+from py_obj.obj_core import MatchRecord, StormObject
 
 from .. import cb_colors
 from ..climatology.contingency_stats import compute_csi, compute_far, compute_fbias, compute_pod
@@ -76,7 +76,7 @@ _STATS_BOX_POSITIONS = {
 class ObjectSlice:
     """One (member, valid_time) slice's worth of object data -- the common
     unit every rendering function in this module consumes. Repackages
-    `python_obj.obj_core.iter_object_slices`/`iter_object_slices_lazy`'s
+    `py_obj.obj_core.iter_object_slices`/`iter_object_slices_lazy`'s
     tuple output for uniform passing between selection/loading code and the
     plotting functions here."""
     lat2d: np.ndarray

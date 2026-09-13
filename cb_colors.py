@@ -1,6 +1,6 @@
 """Small, self-contained color constants for py_obj_plotting -- deliberately
 NOT importing python_base/wofs_colortables.py, since py_obj_plotting (like
-python_obj) is meant to be able to stand alone with no dependency on the
+py_obj) is meant to be able to stand alone with no dependency on the
 legacy python_base/ directory. Values copied from wofs_colortables.py's own
 ColorBrewer-derived palette (only the specific entries this package uses).
 """

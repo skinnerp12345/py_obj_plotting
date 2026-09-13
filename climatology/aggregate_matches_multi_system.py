@@ -3,7 +3,7 @@ contingency-table counts AND per-lead_minutes diagnostic-property
 distributions across several INDEPENDENTLY forecast-vs-MRMS-matched systems
 (e.g. WoFS, WoFSCast, NowcastNet), restricted to (forecast cycle, lead time)
 combinations where every system has a matched result -- a fair, apples-to-
-apples comparison, mirroring python_obj's own "shared valid times" precedent
+apples comparison, mirroring py_obj's own "shared valid times" precedent
 (climatology.aggregate_shared_valid_times) but applied to match/contingency
 counts, keyed by (cycle init_time, lead_minutes) rather than a flat valid_time
 set.
@@ -51,7 +51,7 @@ from .aggregate_matches_by_lead_hour import (
 # own area_km2/mean_intensity should be counted. Necessary because a
 # truth_extra/forecast_extra row ALSO carries its own best near-miss
 # candidate's full field set on the OTHER side (see
-# python_obj/obj_core/matching.py's _record_from_objects: truth/forecast
+# py_obj/obj_core/matching.py's _record_from_objects: truth/forecast
 # fields are populated whenever that side's object is not None, regardless of
 # category) -- so a forecast object that lost a contested match and is
 # truly categorized "forecast_extra" on its own row can ALSO appear as the
@@ -453,7 +453,7 @@ def build_multi_system_object_climatology_by_storm_mode(
 ) -> tuple[dict, MultiSystemAvailabilityReport]:
     """Same shape/pooling as build_multi_system_object_climatology(), restricted
     to objects of one storm mode (0=cellular, 1=mixed, 2=linear -- see
-    python_obj/obj_core/matching.py's is_linear convention). Unlike the
+    py_obj/obj_core/matching.py's is_linear convention). Unlike the
     truth/forecast category-membership asymmetry
     build_match_lead_hour_climatology_by_storm_mode() has to handle (a
     false_alarm row has NO truth object at all, so a merged "effective"

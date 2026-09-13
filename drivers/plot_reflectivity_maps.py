@@ -17,8 +17,8 @@ _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.dirname(os.path.dirname(_THIS_DIR))
 sys.path.insert(0, _REPO_ROOT)
 
-from python_obj.obj_core import build_model_manifest
-from python_obj.regrid import clip_near_zero_sentinel, load_mrms_grib2, load_mrms_netcdf
+from py_obj.obj_core import build_model_manifest
+from py_obj.regrid import clip_near_zero_sentinel, load_mrms_grib2, load_mrms_netcdf
 from py_obj_plotting.config import load_reflectivity_map_config
 from py_obj_plotting.plots.reflectivity_map import ReflectivityFrame, plot_reflectivity_map
 from py_obj_plotting.plots.spatial_map import crop_extent_from_mask

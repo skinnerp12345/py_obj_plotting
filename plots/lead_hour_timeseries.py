@@ -2,7 +2,7 @@
 hour, built on top of climatology.aggregate_by_lead_hour's pooled
 per-(member, lead_hour) MPAS and per-lead_hour MRMS distributions.
 
-Reuses python_obj.histogram.match_percentile_threshold unchanged for the
+Reuses py_obj.histogram.match_percentile_threshold unchanged for the
 actual CDF/percentile math -- this module only loops over lead hours/
 members/thresholds and calls it, plus does the matplotlib presentation.
 """
@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from python_obj.histogram import match_percentile_threshold
+from py_obj.histogram import match_percentile_threshold
 
 from .. import cb_colors
 from ..climatology import LeadHourClimatology

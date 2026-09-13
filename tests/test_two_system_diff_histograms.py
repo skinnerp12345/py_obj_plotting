@@ -18,7 +18,7 @@ import pytest
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting import cb_colors
 from py_obj_plotting.climatology import build_per_case_match_climatologies, case_metrics
 from py_obj_plotting.plots.two_system_diff_histograms import plot_two_system_diff_histograms

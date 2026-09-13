@@ -17,11 +17,11 @@ centroid_dist_km is computed here via haversine on the already-stored
 truth_centroid_lat/lon + forecast_centroid_lat/lon fields, NOT read from a
 stored centroid_dist_km variable -- confirmed real match files (all four
 ncar_mpas_analysis/matched_objects_*km/ sets) predate that field (added to
-python_obj after these files were generated) and are not being regenerated
+py_obj after these files were generated) and are not being regenerated
 (478 cases x ~110s would be many hours); computing it from data already
 present in every existing file avoids that entirely, for old and new files
 alike. This is a standard great-circle distance, not the exact LCC-
-projected planar distance python_obj uses internally for matching (which
+projected planar distance py_obj uses internally for matching (which
 depends on grid-specific projection parameters not reconstructable from a
 match file alone) -- close enough for a diagnostic distribution plot at
 storm-object separation scales (up to a few hundred km), but not bit-

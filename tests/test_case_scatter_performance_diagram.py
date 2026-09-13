@@ -16,7 +16,7 @@ import matplotlib.collections
 import matplotlib.pyplot as plt
 import pytest
 
-from python_obj.obj_core import MatchRecord, MatchResult, write_match_file
+from py_obj.obj_core import MatchRecord, MatchResult, write_match_file
 from py_obj_plotting import cb_colors
 from py_obj_plotting.climatology import build_per_case_match_climatologies
 from py_obj_plotting.plots.performance_diagram import plot_case_scatter_performance_diagram

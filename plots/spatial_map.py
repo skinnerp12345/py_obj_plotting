@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import BoundaryNorm
 
-from python_obj.obj_core import load_conus_boundary
+from py_obj.obj_core import load_conus_boundary
 
 from .. import cb_colors
 
@@ -69,7 +69,7 @@ def build_base_map(
     draw_countries: bool = False, draw_coastlines: bool = True,
 ):
     """One PlateCarree axes with the CONUS boundary outline (from
-    `python_obj.obj_core.load_conus_boundary`, plotted as a line -- not a
+    `py_obj.obj_core.load_conus_boundary`, plotted as a line -- not a
     cartopy Feature, matching the existing precedent exactly), physical
     coastlines (10m resolution -- includes Mexico's Gulf/Pacific coast, not
     just the CONUS outline), and optional state/country political-border

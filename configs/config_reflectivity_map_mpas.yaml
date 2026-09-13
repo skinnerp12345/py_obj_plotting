@@ -1,13 +1,13 @@
 # Real, runnable example: standalone composite-reflectivity spatial map
 # from deterministic MPAS forecast output (a single member, no ensemble
 # dimension) -- points at py_obj_plotting's own bundled
-# python_obj/sample_data/, so this runs with no external data needed.
+# py_obj/sample_data/, so this runs with no external data needed.
 # init_attr/lead_attr/init_format all use load_model_netcdf's own MPAS-
 # compatible defaults (initializationTime/forecastHour/"%Y%m%d%H"), so
 # nothing extra needs to be set here beyond var_name.
 
 source: model
-input_dir: ../../python_obj/sample_data/mpas_case/mpas_mem1
+input_dir: ../../py_obj/sample_data/mpas_case/mpas_mem1
 var_name: refl10cm_max
 
 times:

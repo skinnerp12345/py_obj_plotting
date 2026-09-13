@@ -1,6 +1,6 @@
 """Real, unconditional end-to-end validation of
 drivers.plot_reflectivity_maps.run_one_case against py_obj_plotting's own
-bundled python_obj/sample_data/ -- covers all 3 sources plus the
+bundled py_obj/sample_data/ -- covers all 3 sources plus the
 stacked-member (WoFS-style) scenario, no skip-marks needed since this data
 is committed and always present. Additional skip-marked smoke tests against
 the larger external test_mrms//interp_mrms//test_mpas/ directories provide
@@ -18,7 +18,7 @@ import yaml
 from py_obj_plotting.drivers.plot_reflectivity_maps import run_one_case
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SAMPLE_DATA = os.path.join(REPO_ROOT, "python_obj", "sample_data")
+SAMPLE_DATA = os.path.join(REPO_ROOT, "py_obj", "sample_data")
 TEST_MRMS_DIR = os.path.join(REPO_ROOT, "test_mrms")
 INTERP_MRMS_DIR = os.path.join(REPO_ROOT, "interp_mrms")
 TEST_MPAS_DIR = os.path.join(REPO_ROOT, "test_mpas")
@@ -134,7 +134,7 @@ def test_native_mrms_clips_near_zero_sentinel(tmp_path):
     near/below 0 dBZ") clipped to 0 before plotting -- confirmed by loading
     the same file both ways and checking the clipped version has no
     remaining -99 values while the raw version might."""
-    from python_obj.regrid import load_mrms_grib2
+    from py_obj.regrid import load_mrms_grib2
 
     raw_path = os.path.join(SAMPLE_DATA, "mpas_case", "mrms", "20230501", "MRMS_MergedReflectivityQCComposite_00.50_20230501-010041.grib2.gz")
     raw_field = load_mrms_grib2(raw_path)
@@ -149,7 +149,7 @@ def test_native_mrms_clips_near_zero_sentinel(tmp_path):
     })
     run_one_case(str(cfg_path))
 
-    from python_obj.regrid.io_mrms import MRMS_NEAR_ZERO_VALUE, clip_near_zero_sentinel
+    from py_obj.regrid.io_mrms import MRMS_NEAR_ZERO_VALUE, clip_near_zero_sentinel
     clipped = clip_near_zero_sentinel(raw_field.data)
     print(f"\n[refl-driver-check5] raw has -99: {np.any(raw_field.data == MRMS_NEAR_ZERO_VALUE)}, "
           f"clipped has -99: {np.any(clipped == MRMS_NEAR_ZERO_VALUE)}")

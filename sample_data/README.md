@@ -15,7 +15,7 @@ configs can run with zero external data -- just clone and go.
   - `mrms_native/20230513/*.grib2.gz` -- the raw native file, copied as-is
     (~2 MB).
   - `mrms_interp/interp_mrms_20230513_000015.nc` -- that file interpolated
-    onto a real MPAS full-CONUS target grid (reusing `python_obj`'s
+    onto a real MPAS full-CONUS target grid (reusing `py_obj`'s
     existing conservative-regridding pipeline), then cropped by row/col to
     the bounding box of `conus_mask_east`'s own kept (eastern 2/3 CONUS)
     region (~26 MB -- the eastern 2/3 of CONUS is inherently a large area;

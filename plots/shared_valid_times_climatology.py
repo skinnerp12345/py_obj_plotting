@@ -2,7 +2,7 @@
 climatology.aggregate_shared_valid_times's per-source PDF/CDF (each source's
 own climatology, restricted to valid times where every source has data).
 
-Reuses python_obj.histogram.value_at_percentile unchanged for the actual
+Reuses py_obj.histogram.value_at_percentile unchanged for the actual
 CDF lookup -- this module only loops over sources/thresholds and calls it,
 plus does the matplotlib presentation.
 """
@@ -15,7 +15,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from python_obj.histogram import value_at_percentile
+from py_obj.histogram import value_at_percentile
 
 from .. import cb_colors
 from ..climatology import SharedValidTimesClimatology

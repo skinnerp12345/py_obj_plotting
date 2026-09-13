@@ -1,36 +1,38 @@
 # py_obj_plotting
 
 Verification plotting and climatology suite for
-[`python_obj`](https://github.com/skinnerp12345/py_obj) match/object output:
+[`py_obj`](https://github.com/skinnerp12345/py_obj) match/object output:
 POD/FAR/FBIAS/CSI and matched-pair diagnostic time series, performance
 diagrams, object-property POD heatmaps, storm-mode filtering, spatial maps
 of identified objects, and composite-reflectivity spatial maps. A
-standalone, complementary package -- imports `python_obj` as a dependency
+standalone, complementary package -- imports `py_obj` as a dependency
 and never modifies it.
 
 ## Installation
 
 ```bash
-git clone https://github.com/skinnerp12345/py_obj.git python_obj
-cd python_obj
+git clone https://github.com/skinnerp12345/py_obj.git
+cd py_obj
 conda env create -f environment.yml
-conda activate python_obj_env
-pip install -e . --no-deps
+conda activate py_obj_env
 cd ..
 
 git clone <this repo's URL> py_obj_plotting
 cd py_obj_plotting
-pip install -e . --no-deps
 ```
 
-`py_obj_plotting` needs `python_obj` importable in the same environment --
-its `environment.yml` mirrors `python_obj`'s own dependency set (every code
-path here that touches raw MRMS/model files or masking goes through
-`python_obj`, which pulls those dependencies in transitively even for
-callers that only exercise a subset). The `pip install -e .` step registers
-this checkout as the importable package `py_obj_plotting` independent of
-the checkout folder's own name, exactly like `python_obj`'s own install
-step.
+`py_obj_plotting` needs `py_obj` importable in the same environment -- its
+`environment.yml` mirrors `py_obj`'s own dependency set (every code path
+here that touches raw MRMS/model files or masking goes through `py_obj`,
+which pulls those dependencies in transitively even for callers that only
+exercise a subset). Since both checkouts sit side by side (`py_obj/` and
+`py_obj_plotting/` as siblings) and every internal import matches each
+repo's own folder name, running any script or notebook from inside either
+repo just works via a plain `sys.path` insertion of their shared parent
+directory (the pattern already used throughout both repos' own drivers/
+tests/notebooks) -- no `pip install` step is required for in-repo use.
+`pip install -e . --no-deps` remains available in either repo if you want
+to use it from a script or notebook outside the checkout.
 
 ## What's here
 
@@ -86,7 +88,7 @@ the identical mechanism) against MRMS truth, purely from a config file --
 no hardcoded per-scenario driver script. Built on:
 
 - `systems.SystemSpec`/`load_system()`: one system = a name + a directory
-  of `match_init_*.nc` files (`python_obj.obj_core.run_matching_series`
+  of `match_init_*.nc` files (`py_obj.obj_core.run_matching_series`
   output). Lead time is always normalized to **minutes** internally
   (never hours, to avoid float-precision drift at fine cadences);
   `member_id` is treated as a fully opaque string throughout (no format
@@ -114,7 +116,7 @@ no hardcoded per-scenario driver script. Built on:
 
 Two real example configs (points at external, non-bundled data --
 `sfe_poster/`/`ncar_mpas_analysis/`, same "bring your own larger dataset"
-convention as `python_obj`): `configs/config_sfe_3system.yaml` (WoFS vs.
+convention as `py_obj`): `configs/config_sfe_3system.yaml` (WoFS vs.
 WoFSCast vs. NowcastNet, mixed ensemble/deterministic, 0-6h at 5-10min
 cadence) and `configs/config_mpas_thresholds.yaml` (4 matching-threshold
 variants of one MPAS ensemble, 0-132h hourly) -- plus 3 pairwise SFE
@@ -237,7 +239,7 @@ field (omitting one skips just that property's heatmap):
 - `age_bins`: truth object age **relative to init** (`age_seconds -
   lead_minutes*60`, the same transform the legacy used, in **seconds**)
   -- only produces real data if the truth series was **tracked** at
-  identification time (`observations.track: true` in `python_obj`'s own
+  identification time (`observations.track: true` in `py_obj`'s own
   config). A match file whose truth series wasn't tracked has no real age
   data at all; the driver detects this per system and skips just that
   heatmap with an explicit report (`skipping heatmap_age_<system>.png --
@@ -262,7 +264,7 @@ cell's `|diff|` exceeds its own bootstrap CI width via the new
 Object age is a genuinely new capability end to end, not just a plotting
 addition: `StormObject.age_seconds` existed at identification time but
 was never persisted to match files before this feature -- schema extended
-(`python_obj/obj_core/matching.py`'s `_MATCH_RECORD_SIDE_FIELDS`,
+(`py_obj/obj_core/matching.py`'s `_MATCH_RECORD_SIDE_FIELDS`,
 `match_io.py`'s `_MATCH_FLOAT_FIELDS`) and validated on a real regenerated
 tracked case (437/585 real, non-null `truth_age_seconds` values, exactly
 matching every non-`false_alarm` row).
@@ -272,7 +274,7 @@ matching every non-`false_alarm` row).
 `storm_mode_timeseries:` (config, `modes: [cellular, mixed, linear]` by
 default) recomputes the same POD/FAR/FBIAS/CSI comparison time series
 (`metrics:`) separately for each requested storm mode (`is_linear`:
-0=cellular, 1=mixed, 2=linear -- see `python_obj`'s linear-classification
+0=cellular, 1=mixed, 2=linear -- see `py_obj`'s linear-classification
 work), written under `output_dir/storm_mode_<mode>/`. Filters at the raw
 per-record level **before** pooling: hit/miss/truth_extra rows are keyed
 by `truth_is_linear`; false_alarm/forecast_extra rows (no truth object at
@@ -352,7 +354,7 @@ object-identification pipeline entirely (`plots.reflectivity_map`, config
 `ReflectivityMapConfig`). `source` selects the loader:
 
 - `model`: forecast output (MPAS/WoFS/NowcastNet-style), via
-  `python_obj`'s model manifest builder. `var_name` is required;
+  `py_obj`'s model manifest builder. `var_name` is required;
   `member_subdirs`/`stacked_members` mirror that function's own semantics
   (MPAS-style member subdirectories vs. WoFS-style one-file-with-all-
   members-stacked) -- whenever either is set, `member_id` is required,
@@ -386,8 +388,8 @@ since this is one specific analysis rather than a general capability.
 
 `climatology.build_lead_hour_climatology(mpas_dir, mrms_dir, ...)` reads
 every `hist_model_*.nc` (one per MPAS ensemble forecast case, produced by
-`python_obj.drivers.build_histogram_model`) and every `hist_mrms_*.nc` (one
-per MRMS day, produced by `python_obj.drivers.build_histogram_mrms`) under
+`py_obj.drivers.build_histogram_model`) and every `hist_mrms_*.nc` (one
+per MRMS day, produced by `py_obj.drivers.build_histogram_mrms`) under
 the given directories, and pools them into:
 
 - one composite reflectivity distribution per `(member, lead_hour)` for
@@ -405,7 +407,7 @@ tolerance (default +/-10 minutes) is skipped and reported in
 `LeadHourClimatology.unmatched`, never silently dropped.
 
 `plots.compute_matched_percentiles(clim, thresholds=(40.0, 45.0))` then
-calls `python_obj.histogram.match_percentile_threshold` (unmodified) for
+calls `py_obj.histogram.match_percentile_threshold` (unmodified) for
 every `(lead_hour, member, threshold)` combination, giving:
 
 - `matched_value[threshold][member]` -- the MPAS dBZ value at the same
@@ -449,7 +451,7 @@ summing-then-normalizing give genuinely different results).
 `plots.compute_percentile_table()` finds the percentile MRMS's own 40/45
 dBZ threshold occurs at in MRMS's shared-valid-time climatology, then the
 dBZ value at that same percentile in every other source's climatology
-(reuses `python_obj.histogram.value_at_percentile` unchanged).
+(reuses `py_obj.histogram.value_at_percentile` unchanged).
 `plots.plot_pdf_cdf_per_system()`/`plots.plot_combined_pdf()`/
 `plots.plot_combined_cdf()` render one PDF+CDF figure per source plus one
 combined overlay figure each for PDF and CDF (never a dual-axis PDF+CDF
@@ -488,9 +490,9 @@ how to run it.
 
 Most tests use small, synthetic, hand-computed fixtures, plus a
 smaller set of real-data checks against this package's own bundled
-`sample_data/` and `python_obj`'s bundled `sample_data/` (unconditional,
+`sample_data/` and `py_obj`'s bundled `sample_data/` (unconditional,
 always run) alongside additional real-scale checks against larger external
 datasets (`ncar_mpas_analysis/`, `sfe_poster/`, etc.) that are not bundled
-and skip cleanly when absent, consistent with `python_obj`'s own "bring
+and skip cleanly when absent, consistent with `py_obj`'s own "bring
 your own larger dataset" precedent for scenarios too big to ship with the
 repo.
