@@ -14,6 +14,13 @@ from .aggregate_object_property_pod import (
     ObjectPropertyPodClimatology,
     build_object_property_pod_climatology,
 )
+from .aggregate_ci_skill import (
+    CIAgeDifferenceDistribution,
+    TrackingRestartReport,
+    build_ci_age_difference_distribution,
+    build_ci_skill_climatology,
+    count_tracking_restarts,
+)
 from .aggregate_matches_per_case import (
     build_per_case_match_climatologies,
     case_metrics,
@@ -54,6 +61,11 @@ from .verification_stats import VerificationStats, compute_verification_stats
 __all__ = [
     "LeadHourClimatology",
     "build_lead_hour_climatology",
+    "CIAgeDifferenceDistribution",
+    "TrackingRestartReport",
+    "count_tracking_restarts",
+    "build_ci_age_difference_distribution",
+    "build_ci_skill_climatology",
     "MatchLeadHourClimatology",
     "build_match_lead_hour_climatology",
     "build_match_lead_hour_climatology_by_storm_mode",

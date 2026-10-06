@@ -47,6 +47,8 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(_THIS_DIR))
 sys.path.insert(0, _REPO_ROOT)
 
 from py_obj_plotting.climatology import (
+    build_ci_age_difference_distribution,
+    build_ci_skill_climatology,
     build_diagnostic_distribution_climatology_by_storm_mode,
     build_match_lead_hour_climatology_by_storm_mode,
     build_multi_system_diagnostic_climatology,
@@ -56,6 +58,7 @@ from py_obj_plotting.climatology import (
     build_object_property_pod_climatology,
     build_per_case_match_climatologies,
     compute_verification_stats,
+    count_tracking_restarts,
     split_baseline_and_highlight,
 )
 from py_obj_plotting.config import STORM_MODE_TO_INT, load_config, load_suite_config
@@ -63,6 +66,7 @@ from py_obj_plotting.multi_system import check_shared_forecast_cases, load_syste
 from py_obj_plotting.plots import (
     plot_area_ratio_comparison_timeseries,
     plot_centroid_dist_comparison_timeseries,
+    plot_ci_age_difference_histogram,
     plot_csi_comparison_timeseries,
     plot_far_comparison_timeseries,
     plot_fbias_comparison_timeseries,
@@ -161,6 +165,24 @@ def _resolve_two_system_periods(cfg, explicit_periods, context: str) -> list:
         f"{context}: two_system_comparison has no periods of its own, and performance_diagrams.case_scatter "
         "is absent -- set one or the other"
     )
+
+
+def _report_tracking_restarts(systems, cache: dict) -> None:
+    """Prints, per system, how many likely truth-tracking restarts fall inside
+    its forecast windows (see climatology.count_tracking_restarts). Report
+    only -- these objects are counted as new storms by the CI and age
+    analyses; nothing is corrected. Cached so it runs at most once per system."""
+    for s in systems:
+        if s.name not in cache:
+            cache[s.name] = count_tracking_restarts(s.match_dir, match_pattern=s.match_pattern)
+        r = cache[s.name]
+        if r.n_flagged_slices == 0:
+            print(f"  {s.name}: no truth-tracking restarts detected inside forecast windows")
+            continue
+        times = ", ".join(t.strftime("%Y-%m-%d %H:%MZ") for t in r.flagged_valid_times)
+        print(f"  {s.name}: WARNING {r.n_flagged_slices} (case, valid time) slice(s) look like truth-tracking "
+              f"restarts (every truth object age 0), {r.n_truth_objects_reset} truth object(s) reset -- "
+              f"counted as new storms by the CI/age analyses (not corrected). Valid times: {times}")
 
 
 def _run_single_case_highlight(cfg) -> dict:
@@ -365,6 +387,49 @@ def _run_comparison(cfg) -> dict:
                         title=f"{_OBJECT_TIMESERIES_TITLES[fname]} ({mode_label} storm mode)")
                 written.append(out_path)
 
+    restart_reports: dict = {}
+    if cfg.convection_initiation is not None:
+        ci_cfg = cfg.convection_initiation
+        print("\nChecking for truth-tracking restarts inside forecast windows (affects CI)...")
+        _report_tracking_restarts(systems, restart_reports)
+        print(f"\nBuilding convection-initiation (CI) skill climatologies "
+              f"(age_diff_threshold_minutes={ci_cfg.age_diff_threshold_minutes})...")
+        ci_clims = {}
+        for s in systems:
+            clim = build_ci_skill_climatology(
+                s.match_dir, age_diff_threshold_minutes=ci_cfg.age_diff_threshold_minutes,
+                match_pattern=s.match_pattern, include_near_miss_candidates=ci_cfg.include_near_miss_candidates,
+            )
+            ci_clims[s.name] = clim
+            n_total = sum(clim.n_hits.values()) + sum(clim.n_misses.values()) + sum(clim.n_false_alarms.values())
+            print(f"  {s.name}: {n_total} CI-candidate hit/miss/false_alarm record(s)")
+            if n_total == 0:
+                print(f"    WARNING: zero CI records for {s.name!r} -- check the FORECAST series "
+                      "was tracked (model.track: true) at identification time, not just the truth series")
+
+        ci_stats = {
+            name: compute_verification_stats(clim, bootstrap_samples=cfg.bootstrap.samples, ci_interval=cfg.bootstrap.ci_interval)
+            for name, clim in ci_clims.items()
+        }
+        ci_series = [(n, colors[n], ci_stats[n]) for n in system_names]
+        for metric in cfg.metrics:
+            plot_fn, fname = _METRIC_PLOTS[metric]
+            out_path = os.path.join(cfg.output_dir, _with_suffix(fname, "ci"))
+            plot_fn(ci_series, out_path, xtick_fn=adaptive_lead_hour_xticks,
+                    title=f"{_METRIC_TITLES[metric]} (convection initiation)")
+            written.append(out_path)
+
+        print("Building CI age-difference distributions...")
+        for s in systems:
+            dist = build_ci_age_difference_distribution(s.match_dir, match_pattern=s.match_pattern)
+            out_path = os.path.join(cfg.output_dir, f"ci_age_diff_histogram_{_slugify(s.name)}.png")
+            n = plot_ci_age_difference_histogram(
+                dist, out_path, age_diff_threshold_minutes=ci_cfg.age_diff_threshold_minutes,
+                title=f"{s.name}: CI timing-error distribution", color=colors[s.name],
+            )
+            print(f"  {s.name}: {n} matched CI pair(s) -- wrote {out_path}")
+            written.append(out_path)
+
     per_case_climatologies = None
     if cfg.performance_diagrams is not None or cfg.two_system_comparison is not None:
         case_grouping = _case_scatter_case_grouping(cfg)
@@ -432,6 +497,9 @@ def _run_comparison(cfg) -> dict:
         hm = cfg.heatmaps
         bin_edges = {p: np.asarray(v, dtype=float) for p, v in hm.bin_edges().items()}
         print(f"\nBuilding object-property POD climatologies (properties={list(bin_edges)})...")
+        if "age" in bin_edges:
+            print("  truth-tracking restarts (affect the age heatmaps):")
+            _report_tracking_restarts(systems, restart_reports)
         heatmap_clims = {}
         for s in systems:
             clim = build_object_property_pod_climatology(s.match_dir, bin_edges=bin_edges, match_pattern=s.match_pattern)

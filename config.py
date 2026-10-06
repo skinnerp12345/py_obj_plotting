@@ -167,6 +167,33 @@ class StormModeTimeseriesConfig:
 
 
 @dataclass
+class ConvectionInitiationConfig:
+    """Pre-convection-initiation (CI) forecast-skill statistics (see
+    climatology.aggregate_ci_skill). A "CI candidate" object on either side
+    of a match record is one whose own tracked age is less than the elapsed
+    lead time at that valid time (age_seconds < lead_seconds -- "age
+    relative to init" < 0, the same transform HeatmapsConfig's age_bins
+    already uses); a "hit" row only counts as a genuine CI hit when BOTH
+    the truth and forecast objects are themselves CI candidates AND their
+    age difference is within age_diff_threshold_minutes -- see the module
+    docstring for why both sides (not just the truth side) are required.
+
+    Requires the FORECAST series to have been tracked at identification
+    time (model.track: true in py_obj's config), not just the truth series
+    -- a match file whose forecast side was never tracked has no real
+    forecast_age_seconds data at all (see py_obj/obj_core/matching.py's
+    age_seconds field), which the driver detects and reports rather than
+    silently producing an all-zero/blank result.
+
+    include_near_miss_candidates (default False, matching HeatmapsConfig's/
+    aggregate_object_property_pod.py's own hit/miss-only scope precedent):
+    whether truth_extra/forecast_extra rows are folded into the CI
+    contingency table's extended (FBIAS-only) terms, or excluded entirely."""
+    age_diff_threshold_minutes: float
+    include_near_miss_candidates: bool = False
+
+
+@dataclass
 class MatchingTimeseriesConfig:
     systems: list  # list[SystemSpec]
     lead_time: LeadTimeConfig = field(default_factory=LeadTimeConfig)
@@ -183,6 +210,7 @@ class MatchingTimeseriesConfig:
     single_case_highlight: SingleCaseHighlightConfig | None = None
     heatmaps: HeatmapsConfig | None = None
     storm_mode_timeseries: StormModeTimeseriesConfig | None = None
+    convection_initiation: ConvectionInitiationConfig | None = None
 
 
 def _parse_lead_minutes_range(raw, context: str) -> tuple:
@@ -292,6 +320,15 @@ def _parse_storm_mode_timeseries(raw: dict, context: str) -> StormModeTimeseries
     return StormModeTimeseriesConfig(modes=modes)
 
 
+def _parse_convection_initiation(raw: dict, context: str) -> ConvectionInitiationConfig:
+    if "age_diff_threshold_minutes" not in raw:
+        raise ValueError(f"{context}: convection_initiation is missing required field: age_diff_threshold_minutes")
+    return ConvectionInitiationConfig(
+        age_diff_threshold_minutes=raw["age_diff_threshold_minutes"],
+        include_near_miss_candidates=raw.get("include_near_miss_candidates", False),
+    )
+
+
 def _parse_systems_list(raw_systems: list, base_dir: str, context: str) -> list:
     systems = []
     seen_names = set()
@@ -350,6 +387,7 @@ def _parse_analysis(raw: dict, systems: list, base_dir: str, context: str) -> Ma
     single_case_highlight = _parse_single_case_highlight(raw["single_case_highlight"], [s.name for s in systems], f"{context}: single_case_highlight") if "single_case_highlight" in raw else None
     heatmaps = _parse_heatmaps(raw["heatmaps"], f"{context}: heatmaps") if "heatmaps" in raw else None
     storm_mode_timeseries = _parse_storm_mode_timeseries(raw["storm_mode_timeseries"] or {}, f"{context}: storm_mode_timeseries") if "storm_mode_timeseries" in raw else None
+    convection_initiation = _parse_convection_initiation(raw["convection_initiation"], f"{context}: convection_initiation") if "convection_initiation" in raw else None
 
     return MatchingTimeseriesConfig(
         systems=systems,
@@ -363,6 +401,7 @@ def _parse_analysis(raw: dict, systems: list, base_dir: str, context: str) -> Ma
         single_case_highlight=single_case_highlight,
         heatmaps=heatmaps,
         storm_mode_timeseries=storm_mode_timeseries,
+        convection_initiation=convection_initiation,
     )
 
 

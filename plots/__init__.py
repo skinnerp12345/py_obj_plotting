@@ -1,3 +1,4 @@
+from .ci_age_difference_histogram import plot_ci_age_difference_histogram
 from .diagnostic_distribution_comparison import (
     plot_area_ratio_comparison_timeseries,
     plot_centroid_dist_comparison_timeseries,
@@ -34,6 +35,7 @@ from .verification_stats_comparison import (
 )
 
 __all__ = [
+    "plot_ci_age_difference_histogram",
     "compute_matched_percentiles",
     "compute_ensemble_mean_series",
     "average_over_lead_hour_range",
