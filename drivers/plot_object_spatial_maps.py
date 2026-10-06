@@ -88,6 +88,12 @@ def run_one_case(config_path: str, output_dir_override: str | None = None) -> li
     selected_times_set = set(selected_times)
     needs_truth = cfg.mrms_object_dir is not None and (cfg.show_mrms_overlay or cfg.show_truth_hatch or cfg.color_by == "category")
 
+    alpha_kwargs = {}
+    if cfg.alpha is not None:
+        alpha_kwargs["alpha"] = cfg.alpha
+    if cfg.truth_alpha is not None:
+        alpha_kwargs["truth_alpha"] = cfg.truth_alpha
+
     match_contents = None
     if cfg.match_dir is not None:
         match_path = find_forecast_file_for_init(cfg.match_dir, cfg.init_time, pattern=cfg.match_pattern)
@@ -120,7 +126,7 @@ def run_one_case(config_path: str, output_dir_override: str | None = None) -> li
 
             out_path = os.path.join(cfg.output_dir, f"paintball_{cfg.color_by}_{valid_time:%Y%m%d_%H%M%S}.png")
             plot_paintball_map(member_slices, out_path, extent=extent, color_by=cfg.color_by,
-                                match_records_by_member=match_records_by_member, truth=truth_slice)
+                                match_records_by_member=match_records_by_member, truth=truth_slice, **alpha_kwargs)
             written.append(out_path)
             print(f"  wrote {out_path} ({len(member_slices)} members)")
         return written
@@ -149,7 +155,7 @@ def run_one_case(config_path: str, output_dir_override: str | None = None) -> li
         plot_object_spatial_map(
             forecast_slice, out_path, extent=extent, color_by=cfg.color_by,
             truth=truth_slice, show_forecast_hatch=cfg.show_forecast_hatch, show_truth_hatch=cfg.show_truth_hatch,
-            match_records=match_records,
+            match_records=match_records, **alpha_kwargs,
         )
         written.append(out_path)
         print(f"  wrote {out_path}")

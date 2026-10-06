@@ -512,6 +512,8 @@ class ObjectSpatialMapConfig:
     show_forecast_hatch: bool = False
     show_truth_hatch: bool = False
     paintball: bool = False
+    alpha: float | None = None
+    truth_alpha: float | None = None
     output_dir: str = "output"
 
 
@@ -591,6 +593,8 @@ def _parse_object_spatial_map(raw: dict, base_dir: str, context: str) -> ObjectS
         show_forecast_hatch=raw.get("show_forecast_hatch", False),
         show_truth_hatch=show_truth_hatch,
         paintball=paintball,
+        alpha=raw.get("alpha"),
+        truth_alpha=raw.get("truth_alpha"),
         output_dir=output_dir,
     )
 
