@@ -54,7 +54,9 @@ _LEFT_MARGIN_INCHES = 0.8  # 0.1 * 8
 _BOTTOM_MARGIN_INCHES = 0.8  # 0.1 * 8
 _RIGHT_MARGIN_INCHES = 0.16  # 0.02 * 8
 _TITLE_MARGIN_INCHES = 0.6
-_COLORBAR_EXTRA_WIDTH_INCHES = 0.75  # matches the legacy's own 8.75 - 8.0 reserve
+_COLORBAR_EXTRA_WIDTH_INCHES = 1.4  # room for colorbar + tick labels + axis label; the legacy's own
+                                    # 0.75 reserve cut ~0.4in of them off (measured tight bbox: 9.16in
+                                    # right edge vs. an 8.75in-wide figure)
 _COLORBAR_PAD_INCHES = 0.3  # gap between the main axes' right edge and the colorbar
 _COLORBAR_WIDTH_INCHES = 0.3
 

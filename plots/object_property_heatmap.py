@@ -30,8 +30,8 @@ two systems.
 Label spacing (which lead-time columns get a text label at all) is
 computed DYNAMICALLY from how many lead-time columns this particular
 heatmap has, calibrated against a real reference case (WoFS's own
-heatmaps, ~73 lead-time columns, where a fixed every-4th-column interval
-looks correct) so a heatmap with many more columns (e.g. MPAS, ~133) gets
+heatmaps, ~73 lead-time columns, where a fixed every-5th-column interval
+keeps even 5-6 digit object counts readable) so a heatmap with many more columns (e.g. MPAS, ~133) gets
 a proportionally wider interval (avoiding label overlap) and one with
 fewer columns (e.g. WoFSCast, ~35) gets a proportionally narrower one
 (avoiding labels that look too sparse) -- see _dynamic_label_interval().
@@ -65,13 +65,15 @@ _DIFF_CMAP = "RdBu_r"
 _DIFF_BIN_WIDTH = 0.05
 _DIFF_MIN_HALF_RANGE = 0.2  # floor -- real magnitude can exceed this, never shrinks below it
 
-# Dynamic label-interval calibration: the legacy's own fixed every-4th-
-# column rule was tuned against WoFS's real heatmaps (~73 lead-time
-# columns at 5-min cadence), where it looks correct -- scale that same
+# Dynamic label-interval calibration against WoFS's real heatmaps (~73
+# lead-time columns at 5-min cadence): the legacy used every 4th column,
+# widened here to every 5th (see below) -- scale that same
 # (interval / n_columns) ratio to whatever column count a given heatmap
-# actually has, rather than reusing 4 verbatim regardless of column count.
+# actually has, rather than reusing it verbatim regardless of column count.
 _REFERENCE_N_LEAD_TIMES = 73
-_REFERENCE_LABEL_INTERVAL = 4
+_REFERENCE_LABEL_INTERVAL = 5  # was the legacy's 4: with counts >10,000 the "(12345)" line made
+                               # neighboring labels nearly touch (min gap 0.009in on real WoFS
+                               # heatmaps); 5 gives a >=0.12in gap at those counts
 _LABEL_FONTSIZE = 8  # smaller than the legacy's default -- labels are now 2 lines (POD + count)
 
 # Significance-based label styling on the diff heatmap (plot_object_property_

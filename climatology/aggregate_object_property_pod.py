@@ -164,7 +164,9 @@ def build_object_property_pod_climatology(
             n_bins = len(edges) - 1
             values = _PROPERTY_VALUES[prop](meta)
             if prop == "age":
-                values = values - lead_hour_per_record * 3600.0
+                # Whole-second lead: lead_hour * 3600 carries ~1e-12 s float error, which put an
+                # object present since init (relative age exactly 0) into the [-3600, 0) bin.
+                values = values - np.round(lead_hour_per_record * 3600.0)
             bin_idx = np.digitize(values, edges) - 1
             in_range = hit_or_miss_mask & (bin_idx >= 0) & (bin_idx < n_bins)
             if not np.any(in_range):

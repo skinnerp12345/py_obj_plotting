@@ -89,6 +89,25 @@ def test_age_relative_to_init_transform(tmp_path):
     assert (6, 1.0) not in clim.n_hits["age"]
 
 
+def test_age_present_since_init_lands_in_zero_bin_at_overshooting_lead(tmp_path):
+    """Regression: lead_hour * 3600 overshoots at some leads (125 min ->
+    7500.000000000001 s), which put an object present since init (relative
+    age exactly 0) into the [-600, 0) bin instead of [0, 600)."""
+    assert (7500.0 / 3600.0) * 3600.0 > 7500.0  # precondition: this lead really overshoots in float math
+    init_a = datetime(2023, 5, 1, 0, 0, 0)
+    lead_h = 125.0 / 60.0
+    _write_case(str(tmp_path / "match_init_a.nc"), init_a, {
+        ("mem_1", lead_h): [_record("hit", 1, area_km2=1.0, age_seconds=7500.0)],
+        ("mem_2", lead_h): [_record("hit", 2, area_km2=1.0, age_seconds=7500.0)],
+        ("mem_1", 0.0): [_record("hit", 3, area_km2=1.0, age_seconds=99999.0)],
+        ("mem_2", 0.0): [_record("hit", 4, area_km2=1.0, age_seconds=99999.0)],
+    })
+    clim = build_object_property_pod_climatology(str(tmp_path), bin_edges={"age": np.array([-600.0, 0.0, 600.0])})
+    lh = max(clim.lead_hours)
+    assert clim.n_hits["age"][(1, lh)] == 2
+    assert (0, lh) not in clim.n_hits["age"]
+
+
 def test_false_alarm_and_truth_extra_excluded_from_hit_miss_bins(tmp_path):
     """POD is conditioned on hit/miss rows only -- a truth_extra row has a
     real truth-side object (with a real area) but must never contribute to

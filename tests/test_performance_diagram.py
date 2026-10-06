@@ -79,9 +79,27 @@ def test_figsize_no_colorbar_vs_reserve_colorbar():
     fig2, ax2 = init_performance_diagram(reserve_colorbar=True)
     print(f"\n[perfdiag-check5] no_cbar={fig1.get_size_inches()}, reserve_cbar={fig2.get_size_inches()}")
     assert tuple(fig1.get_size_inches()) == (8.0, 8.44)
-    assert tuple(fig2.get_size_inches()) == (8.75, 8.44)
+    assert tuple(fig2.get_size_inches()) == (9.4, 8.44)
     plt.close(fig1)
     plt.close(fig2)
+
+
+def test_reserved_colorbar_width_fits_colorbar_and_label():
+    """The colorbar's tick labels and axis label must fit inside the figure
+    (regression: the old 0.75in reserve cut ~0.4in of them off)."""
+    from matplotlib.colors import BoundaryNorm
+    from py_obj_plotting.plots.performance_diagram import _add_colorbar_axes
+
+    fig, ax = init_performance_diagram(reserve_colorbar=True)
+    norm = BoundaryNorm(np.arange(-0.15, 0.1501, 0.025), 256)
+    scat = ax.scatter([0.5], [0.5], c=[0.05], cmap="RdBu_r", norm=norm)
+    cbar = fig.colorbar(scat, cax=_add_colorbar_axes(fig), extend="both")
+    cbar.set_label("CSI difference (SystemA - SystemB)")
+    fig.canvas.draw()
+    right_in = cbar.ax.get_tightbbox(fig.canvas.get_renderer()).x1 / fig.dpi
+    print(f"\n[perfdiag-cbar-fit] colorbar right edge {right_in:.3f}in, figure width {fig.get_size_inches()[0]}in")
+    assert right_in < fig.get_size_inches()[0]
+    plt.close(fig)
 
 
 def test_axes_box_is_square_in_physical_inches_both_variants():
