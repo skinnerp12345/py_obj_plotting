@@ -51,31 +51,39 @@ def compute_fbias(hits: int, misses: int, false_alarms: int, truth_extra: int, f
 def bootstrap_ci_widths(
     hits: int, misses: int, false_alarms: int, truth_extra: int, forecast_extra: int,
     samples: int = DEFAULT_BOOTSTRAP_SAMPLES, interval: float = DEFAULT_CI_INTERVAL,
+    seed=None,
 ) -> tuple[float, float, float, float]:
     """Bootstrap CI width (upper percentile - lower percentile of the
     per-replicate statistic distribution, NOT a percentile band around the
-    point estimate) for (pod, far, fbias, csi), resampling the flattened set
-    of individual match records with replacement -- exactly
-    wofs_obj_verif_suite_v2.py's _bootstrap_ci_fast method, extended with
-    truth_extra/forecast_extra labels since FBIAS (unlike POD/FAR/CSI) uses
-    them. Returns (0., 0., 0., 0.) if there are no records at all.
+    point estimate) for (pod, far, fbias, csi). Returns (0., 0., 0., 0.) if
+    there are no records at all.
+
+    Resampling a length-n categorical population with replacement and
+    counting each category's occurrences is EXACTLY the Multinomial(n, p)
+    distribution by definition of resampling-with-replacement -- not an
+    approximation of the older element-by-element approach (concatenate a
+    length-n vector, then np.random.randint gather `samples` resamples of
+    it), just a direct draw from the same target distribution via numpy's
+    own multinomial sampler. This makes bootstrapping O(samples) (five
+    category-probability draws per replicate), independent of n, instead of
+    O(samples * n) for both compute and the intermediate index array's
+    memory -- a real difference at the scale this is called at (once per
+    (member, lead_hour) cell in verification_stats.compute_verification_stats(),
+    where n can range from tens to hundreds of thousands of pooled records).
+
+    seed: optional, forwarded to numpy.random.default_rng() for
+    reproducible output -- None (default) matches the prior implementation's
+    non-reproducible-by-default behavior.
     """
     n_total = hits + misses + false_alarms + truth_extra + forecast_extra
     if n_total == 0:
         return 0.0, 0.0, 0.0, 0.0
 
-    # 1=hit, 0=miss, 2=false_alarm, 3=truth_extra, 4=forecast_extra
-    full_vector = np.concatenate([
-        np.ones(hits), np.zeros(misses), np.full(false_alarms, 2.0),
-        np.full(truth_extra, 3.0), np.full(forecast_extra, 4.0),
-    ])
-    idx = np.random.randint(0, n_total, size=(samples, n_total))
-    sampled = full_vector[idx]
-    h = np.sum(sampled == 1, axis=1).astype(float)
-    m = np.sum(sampled == 0, axis=1).astype(float)
-    f = np.sum(sampled == 2, axis=1).astype(float)
-    te = np.sum(sampled == 3, axis=1).astype(float)
-    fe = np.sum(sampled == 4, axis=1).astype(float)
+    rng = np.random.default_rng(seed)
+    probs = [hits / n_total, misses / n_total, false_alarms / n_total,
+             truth_extra / n_total, forecast_extra / n_total]
+    counts = rng.multinomial(n_total, probs, size=samples)
+    h, m, f, te, fe = (counts[:, i].astype(float) for i in range(5))
 
     # np.divide(..., where=...) leaves the output at its `out=` initial value
     # (0.0) wherever the mask is False, without evaluating that division at
