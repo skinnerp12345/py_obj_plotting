@@ -60,6 +60,30 @@ def test_case_scatter_invalid_case_grouping_raises(tmp_path):
         load_config(str(p))
 
 
+def test_case_scatter_day_start_hour_parses_and_defaults_to_zero(tmp_path):
+    base = {"systems": [{"name": "A", "match_dir": "a"}]}
+    p = tmp_path / "cfg.yaml"
+    _write_yaml(str(p), {**base, "performance_diagrams": {"case_scatter": {
+        "case_grouping": "day", "day_start_hour": 12, "periods": [{"name": "x", "lead_minutes_range": [0, 60]}]}}})
+    assert load_config(str(p)).performance_diagrams.case_scatter.day_start_hour == 12
+    _write_yaml(str(p), {**base, "performance_diagrams": {"case_scatter": {
+        "case_grouping": "day", "periods": [{"name": "x", "lead_minutes_range": [0, 60]}]}}})
+    assert load_config(str(p)).performance_diagrams.case_scatter.day_start_hour == 0
+
+
+@pytest.mark.parametrize("case_scatter, match", [
+    ({"case_grouping": "day", "day_start_hour": 24}, "integer 0-23"),
+    ({"case_grouping": "day", "day_start_hour": "12"}, "integer 0-23"),
+    ({"case_grouping": "init_time", "day_start_hour": 12}, "only applies with case_grouping: day"),
+])
+def test_case_scatter_day_start_hour_invalid_raises(tmp_path, case_scatter, match):
+    p = tmp_path / "cfg.yaml"
+    _write_yaml(str(p), {"systems": [{"name": "A", "match_dir": "a"}], "performance_diagrams": {"case_scatter": {
+        **case_scatter, "periods": [{"name": "x", "lead_minutes_range": [0, 60]}]}}})
+    with pytest.raises(ValueError, match=match):
+        load_config(str(p))
+
+
 def test_case_scatter_empty_periods_raises(tmp_path):
     p = tmp_path / "cfg.yaml"
     _write_yaml(str(p), {"systems": [{"name": "A", "match_dir": "a"}], "performance_diagrams": {"case_scatter": {"periods": []}}})

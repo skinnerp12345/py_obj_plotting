@@ -111,6 +111,33 @@ def test_day_grouping_buckets_same_day_init_times(tmp_path):
     assert cases["2026-05-02"].n_false_alarms[(None, 0.0)] == 1
 
 
+def test_day_start_hour_keeps_a_wofs_day_together_across_00_utc(tmp_path):
+    """day_start_hour=12: a WoFS day's 17Z-03Z inits form ONE case labeled by
+    the evening's date; the default (0) splits them at 00 UTC."""
+    d = tmp_path / "A"
+    d.mkdir()
+    evening = datetime(2026, 5, 6, 17, 0, 0)
+    after_midnight = datetime(2026, 5, 7, 2, 0, 0)
+    prev_day_late = datetime(2026, 5, 6, 3, 0, 0)  # belongs to the May 5 WoFS day
+    for t, cat in ((evening, "hit"), (after_midnight, "hit"), (prev_day_late, "miss")):
+        _write_case(str(d / f"match_init_{t:%Y%m%d_%H%M%S}.nc"), t, {(None, 0): [cat]})
+
+    shifted = build_per_case_match_climatologies([SystemSpec("A", str(d))], case_grouping="day", day_start_hour=12)["A"]
+    calendar = build_per_case_match_climatologies([SystemSpec("A", str(d))], case_grouping="day")["A"]
+    print(f"\n[per-case-day-start] shifted={sorted(shifted)}, calendar={sorted(calendar)}")
+    assert sorted(shifted) == ["2026-05-05", "2026-05-06"]
+    assert shifted["2026-05-06"].n_hits[(None, 0.0)] == 2  # 17Z May 6 + 02Z May 7
+    assert shifted["2026-05-05"].n_misses[(None, 0.0)] == 1  # 03Z May 6
+    assert sorted(calendar) == ["2026-05-06", "2026-05-07"]  # unchanged default behavior
+    assert calendar["2026-05-06"].n_hits[(None, 0.0)] == 1 and calendar["2026-05-06"].n_misses[(None, 0.0)] == 1
+
+
+@pytest.mark.parametrize("bad", [-1, 24, 12.5, True])
+def test_day_start_hour_out_of_range_raises(tmp_path, bad):
+    with pytest.raises(ValueError, match="day_start_hour"):
+        build_per_case_match_climatologies([SystemSpec("A", str(tmp_path))], case_grouping="day", day_start_hour=bad)
+
+
 def test_init_time_grouping_of_the_same_fixture_keeps_them_separate(tmp_path):
     """Same fixture as check 2, but init_time grouping must NOT bucket the
     two same-day init_times together -- confirms the two grouping modes

@@ -22,6 +22,7 @@ period-aggregated convenience layer on top of that (for scatter-style
 diagrams that need one point per case, not a full lead-hour curve).
 """
 
+from datetime import timedelta
 from typing import Literal
 
 import numpy as np
@@ -35,21 +36,29 @@ _CATEGORIES = ("hit", "miss", "false_alarm", "truth_extra", "forecast_extra")
 _VALID_CASE_GROUPINGS = ("init_time", "day")
 
 
-def _case_key(init_time, case_grouping: str):
+def _forecast_day(init_time, day_start_hour: int):
+    """The date a 'day'-grouped case belongs to: init_time's own UTC date,
+    shifted back by day_start_hour -- e.g. day_start_hour=12 puts a 02Z
+    May 7 init into the "2026-05-06" case, so one WoFS day (roughly 17Z to
+    03Z) stays one case instead of splitting at 00 UTC."""
+    return (init_time - timedelta(hours=day_start_hour)).date()
+
+
+def _case_key(init_time, case_grouping: str, day_start_hour: int = 0):
     """The grouping key used to bucket cases together -- 'day' buckets
-    every init_time sharing a calendar date into one case (WoFS-style,
-    many initializations/day); 'init_time' keeps every real init_time as
-    its own case (MPAS-style, one case per daily run)."""
+    every init_time sharing a forecast day (see _forecast_day) into one case
+    (WoFS-style, many initializations/day); 'init_time' keeps every real
+    init_time as its own case (MPAS-style, one case per daily run)."""
     if case_grouping == "day":
-        return init_time.date()
+        return _forecast_day(init_time, day_start_hour)
     if case_grouping == "init_time":
         return init_time
     raise ValueError(f"case_grouping must be one of {_VALID_CASE_GROUPINGS}, got {case_grouping!r}")
 
 
-def _case_label(init_time, case_grouping: str) -> str:
+def _case_label(init_time, case_grouping: str, day_start_hour: int = 0) -> str:
     if case_grouping == "day":
-        return init_time.strftime("%Y-%m-%d")
+        return _forecast_day(init_time, day_start_hour).strftime("%Y-%m-%d")
     if case_grouping == "init_time":
         return init_time.strftime("%Y-%m-%d %H%MZ")
     raise ValueError(f"case_grouping must be one of {_VALID_CASE_GROUPINGS}, got {case_grouping!r}")
@@ -60,13 +69,20 @@ def build_per_case_match_climatologies(
     lead_time_mode: Literal["intersection", "union"] = "intersection",
     lead_minutes: list | None = None,
     case_grouping: Literal["init_time", "day"] = "init_time",
+    day_start_hour: int = 0,
 ) -> dict[str, dict[str, MatchLeadHourClimatology]]:
     """Returns {system_name: {case_label: MatchLeadHourClimatology}} -- one
     climatology PER CASE, not pooled across cases like
     build_multi_system_match_climatology(). Same lead_time_mode/lead_minutes
-    semantics as that function (see multi_system.compute_included_keys)."""
+    semantics as that function (see multi_system.compute_included_keys).
+
+    day_start_hour (0-23, 'day' grouping only; default 0 = UTC calendar
+    date): the UTC hour a forecast day starts at, so e.g. 12 groups WoFS's
+    17Z-03Z initializations into one case labeled by the evening's date."""
     if case_grouping not in _VALID_CASE_GROUPINGS:
         raise ValueError(f"case_grouping must be one of {_VALID_CASE_GROUPINGS}, got {case_grouping!r}")
+    if isinstance(day_start_hour, bool) or not isinstance(day_start_hour, int) or not 0 <= day_start_hour <= 23:
+        raise ValueError(f"day_start_hour must be an integer 0-23, got {day_start_hour!r}")
 
     loaded = load_systems(systems)
     included, _ = compute_included_keys(loaded, lead_time_mode=lead_time_mode, lead_minutes=lead_minutes)
@@ -79,7 +95,7 @@ def build_per_case_match_climatologies(
         keys_by_case: dict = {}
         for key in included[name]:
             init_time, _lm = key
-            keys_by_case.setdefault(_case_key(init_time, case_grouping), []).append(key)
+            keys_by_case.setdefault(_case_key(init_time, case_grouping, day_start_hour), []).append(key)
 
         cases: dict[str, MatchLeadHourClimatology] = {}
         for case_key, case_keys in keys_by_case.items():
@@ -100,9 +116,9 @@ def build_per_case_match_climatologies(
                         target[mkey] = target.get(mkey, 0) + int(np.sum(cats == cat))
 
             # every key bucketed under one case_key shares the same real
-            # init_time (init_time grouping) or the same calendar date
+            # init_time (init_time grouping) or the same forecast day
             # (day grouping), so any one of them yields the correct label.
-            label = _case_label(case_keys[0][0], case_grouping)
+            label = _case_label(case_keys[0][0], case_grouping, day_start_hour)
             if label in cases:
                 raise ValueError(
                     f"System '{name}': case label '{label}' is not unique under case_grouping="

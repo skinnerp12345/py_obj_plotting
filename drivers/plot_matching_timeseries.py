@@ -156,6 +156,12 @@ def _case_scatter_case_grouping(cfg) -> str:
     return "init_time"
 
 
+def _case_scatter_day_start_hour(cfg) -> int:
+    if cfg.performance_diagrams is not None and cfg.performance_diagrams.case_scatter is not None:
+        return cfg.performance_diagrams.case_scatter.day_start_hour
+    return 0
+
+
 def _resolve_two_system_periods(cfg, explicit_periods, context: str) -> list:
     if explicit_periods is not None:
         return explicit_periods
@@ -193,7 +199,7 @@ def _run_single_case_highlight(cfg) -> dict:
     case_grouping = _case_scatter_case_grouping(cfg)
     per_case = build_per_case_match_climatologies(
         [system_spec], lead_time_mode=cfg.lead_time.mode, lead_minutes=cfg.lead_time.lead_minutes,
-        case_grouping=case_grouping,
+        case_grouping=case_grouping, day_start_hour=_case_scatter_day_start_hour(cfg),
     )[sch.system]
     print(f"  {len(per_case)} case(s) available for {sch.system!r} (case_grouping={case_grouping!r})")
 
@@ -436,7 +442,7 @@ def _run_comparison(cfg) -> dict:
         print(f"\nBuilding per-case match climatologies (case_grouping={case_grouping!r})...")
         per_case_climatologies = build_per_case_match_climatologies(
             systems, lead_time_mode=cfg.lead_time.mode, lead_minutes=cfg.lead_time.lead_minutes,
-            case_grouping=case_grouping,
+            case_grouping=case_grouping, day_start_hour=_case_scatter_day_start_hour(cfg),
         )
         for name, cases in per_case_climatologies.items():
             print(f"  {name}: {len(cases)} case(s)")

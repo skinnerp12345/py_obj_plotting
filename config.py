@@ -78,7 +78,9 @@ class CaseScatterPeriod:
 
 @dataclass
 class CaseScatterConfig:
-    case_grouping: str = "init_time"  # or "day" (WoFS-style: bucket same-calendar-day init_times together)
+    case_grouping: str = "init_time"  # or "day" (WoFS-style: bucket same-forecast-day init_times together)
+    day_start_hour: int = 0  # 'day' grouping only: UTC hour a forecast day starts (0 = calendar date;
+                             # e.g. 12 keeps a WoFS day's 17Z-03Z inits in one case)
     marker_size_basis: str = "truth"  # or "forecast" -- see aggregate_matches_per_case.case_object_count
     periods: list = field(default_factory=list)  # list[CaseScatterPeriod], one case-scatter diagram per entry
 
@@ -247,11 +249,16 @@ def _parse_performance_diagrams(raw: dict, context: str) -> PerformanceDiagramsC
         marker_size_basis = cs.get("marker_size_basis", "truth")
         if marker_size_basis not in _VALID_MARKER_SIZE_BASES:
             raise ValueError(f"{context}: case_scatter.marker_size_basis={marker_size_basis!r} is not one of {_VALID_MARKER_SIZE_BASES}")
+        day_start_hour = cs.get("day_start_hour", 0)
+        if isinstance(day_start_hour, bool) or not isinstance(day_start_hour, int) or not 0 <= day_start_hour <= 23:
+            raise ValueError(f"{context}: case_scatter.day_start_hour must be an integer 0-23, got {day_start_hour!r}")
+        if day_start_hour != 0 and case_grouping != "day":
+            raise ValueError(f"{context}: case_scatter.day_start_hour only applies with case_grouping: day")
         raw_periods = cs.get("periods") or []
         if not raw_periods:
             raise ValueError(f"{context}: case_scatter is present but has no 'periods:' -- at least one is required")
         case_scatter = CaseScatterConfig(
-            case_grouping=case_grouping, marker_size_basis=marker_size_basis,
+            case_grouping=case_grouping, day_start_hour=day_start_hour, marker_size_basis=marker_size_basis,
             periods=_parse_case_scatter_periods(raw_periods, f"{context}: case_scatter"),
         )
 
