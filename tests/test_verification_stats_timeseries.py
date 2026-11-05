@@ -47,6 +47,24 @@ def test_plot_member_ensemble_series_reusable_for_multi_threshold_overlay():
     plt.close(fig)
 
 
+def test_ci_band_spans_half_the_full_width_on_each_side():
+    """A CI width is the FULL interval width (upper - lower percentile), so the
+    band must be value +/- width/2: total band height == width, not 2 x width
+    (regression: the band used to be drawn at +/- the full width)."""
+    import numpy as np
+
+    lead_hours = [0.0, 1.0, 2.0]
+    members = [None]
+    values = {(None, lh): 0.4 for lh in lead_hours}
+    widths = {(None, lh): 0.1 for lh in lead_hours}
+
+    fig, ax = plt.subplots()
+    _plot_member_ensemble_series(ax, lead_hours, members, values, widths)
+    y = np.concatenate([p.vertices[:, 1] for p in ax.collections[0].get_paths()])
+    assert np.isclose(y.min(), 0.35) and np.isclose(y.max(), 0.45)
+    plt.close(fig)
+
+
 def test_deterministic_system_renders_one_bold_line_not_member_spaghetti():
     """A system with members == [None] (this project's established
     sentinel for "no member dimension at all," e.g. a deterministic

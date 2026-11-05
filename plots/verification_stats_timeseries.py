@@ -33,6 +33,9 @@ def _plot_member_ensemble_series(
 
     values_by_member_lead/ci_width_by_member_lead: dict[(member, lead_hour)]
     -> float, e.g. VerificationStats.pod / VerificationStats.pod_ci_width.
+    A CI width is the FULL width of the interval (upper - lower percentile,
+    see contingency_stats.bootstrap_ci_widths), so the band is drawn at
+    +/- half of it -- the interval the width came from, centered on the line.
 
     A DETERMINISTIC system (members == [None], the sentinel this project
     uses throughout for "no member dimension at all," e.g. a deterministic
@@ -46,8 +49,8 @@ def _plot_member_ensemble_series(
 
     per_member_ci = _member_series(ci_width_by_member_lead, members, lead_hours)
     mean_ci_width = _ensemble_mean(per_member_ci, members)
-    lower = [m - w for m, w in zip(ensemble_mean, mean_ci_width)]
-    upper = [m + w for m, w in zip(ensemble_mean, mean_ci_width)]
+    lower = [m - w / 2.0 for m, w in zip(ensemble_mean, mean_ci_width)]
+    upper = [m + w / 2.0 for m, w in zip(ensemble_mean, mean_ci_width)]
     ax.fill_between(lead_hours, lower, upper, color=color, alpha=_CI_SHADE_ALPHA, linewidth=0)
 
     if members == [None]:
